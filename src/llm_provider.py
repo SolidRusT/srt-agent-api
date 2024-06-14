@@ -1,11 +1,11 @@
 import os
 from srt_core.config import Config
-from srt_core.logger import get_logger
+from srt_core.utils.logger import Logger
 
 class LLMProvider:
     def __init__(self):
         self.config = Config()
-        self.logger = get_logger()
+        self.logger = Logger()
         self.load_provider_settings()
 
     def load_llm_settings(self, llm_name):
