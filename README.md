@@ -26,16 +26,24 @@ srt-web-chat is a modular web chat application that integrates the `srt-core` co
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
-3. Install the dependencies and the project:
+3. Install the base dependencies and the project:
 
    ```bash
    pip install .
    ```
 
-   For editable installations (useful during development), use:
+4. Install optional dependencies as needed:
+
+   For vLLM Provider:
 
    ```bash
-   pip install -e .
+   pip install .[vllm_provider]
+   ```
+
+   For Search Tool:
+
+   ```bash
+   pip install .[search_tool]
    ```
 
 ## Configuration
@@ -89,8 +97,6 @@ srt-web-chat/
 ├── LICENSE
 ├── README.md
 ├── config.yaml
-├── logs/
-│   └── client-chat-Default.log
 ├── pyproject.toml
 ├── src/
 │   ├── app.py
@@ -98,10 +104,6 @@ srt-web-chat/
 │   ├── llm_provider.py
 │   ├── main.py
 │   ├── search_module.py
-│   └── srt_web_chat.egg-info/
-├── temp/
-│   ├── agents/
-│   └── providers/
 └── tests/
     ├── test_chat_module.py
     ├── test_llm_provider.py
