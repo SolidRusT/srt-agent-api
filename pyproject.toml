@@ -9,16 +9,25 @@ description = "A modular web chat application integrating srt-core and llama-cpp
 readme = "README.md"
 requires-python = ">=3.6"
 license = {text = "MIT"}
+
 authors = [
     {name = "SolidRusT Networks", email = "info@solidrust.net"}
 ]
 
-[project.urls]
-Homepage = "https://github.com/SolidRusT/srt-web-chat"
-
-[project.dependencies]
 dependencies = [
     "srt-core>=0.1.11",
     "llama-cpp-python>=0.2.60",
     "llama-cpp-agent>=0.2.32"
 ]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/SolidRusT/srt-web-chat"
+
+[tool.setuptools.packages.find]
+where = ["src"]
