@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "srt-web-chat"
+version = "0.1.0"
+description = "A modular web chat application integrating srt-core and llama-cpp-agent frameworks."
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "MIT"}
+authors = [
+    {name = "SolidRusT Networks", email = "info@solidrust.net"}
+]
+
+[project.urls]
+Homepage = "https://github.com/SolidRusT/srt-web-chat"
+
+[project.dependencies]
+dependencies = [
+    "srt-core>=0.1.11",
+    "llama-cpp-python>=0.2.60",
+    "llama-cpp-agent>=0.2.32"
+]
