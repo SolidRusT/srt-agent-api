@@ -1,1 +1,3 @@
-srt-core>=0.1.4
+srt-core>=0.1.11
+llama-cpp-python>=0.2.60
+llama-cpp-agent>=0.2.32

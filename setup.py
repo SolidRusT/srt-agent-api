@@ -12,8 +12,9 @@ setup(
     packages=find_packages(where='src'),
     package_dir={"": "src"},
     install_requires=[
-        "srt-core",
-        "llama-cpp-agent",
+        "srt-core>=0.1.11",
+        "llama-cpp-python>=0.2.60",
+        "llama-cpp-agent>=0.2.32",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
