@@ -6,8 +6,6 @@ class SearchModule:
     def __init__(self, config):
         self.config = config
         self.logger = Logger()
-        import logging
-        self.logging = logging
         self.dependencies_available = self._check_dependencies()
         
         if self.dependencies_available:
@@ -20,13 +18,13 @@ class SearchModule:
                 [self.search_tool.get_tool(), self.write_message_to_user]
             )
         else:
-            self.logging.info("Search tool dependencies are not installed. Disabling search functionality.")
+            self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
 
     def _check_dependencies(self):
         required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
         for module in required_modules:
             if not importlib.util.find_spec(module):
-                self.logging.warning(f"Module {module} is not installed.")
+                self.logger.warning(f"Module {module} is not installed.")
                 return False
         return True
 
