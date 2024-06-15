@@ -1,0 +1,14 @@
+LICENSE
+README.md
+pyproject.toml
+src/srt_web_chat.egg-info/PKG-INFO
+src/srt_web_chat.egg-info/SOURCES.txt
+src/srt_web_chat.egg-info/dependency_links.txt
+src/srt_web_chat.egg-info/requires.txt
+src/srt_web_chat.egg-info/top_level.txt
+tests/test_api_module.py
+tests/test_chat_module.py
+tests/test_llm_provider.py
+tests/test_main.py
+tests/test_search_module.py
+tests/test_wiki_summary_module.py

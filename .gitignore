@@ -8,6 +8,5 @@ __pycache__/
 *.py[cod]
 .env
 config.yaml
-*.egg*
 *.whl
 *.gz
