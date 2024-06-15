@@ -40,6 +40,13 @@ while True:
             print(f"Fetched Data: {data}")
         else:
             print("API functionality is disabled due to import issues.")
+    elif user_input.startswith("fetch_list:"):
+        if api_module:
+            url = user_input[len("fetch_list:"):].strip()
+            data_list = api_module.fetch_data_list(url)
+            print(f"Fetched Data List: {data_list}")
+        else:
+            print("API functionality is disabled due to import issues.")
     elif user_input.startswith("search:"):
         if search_module:
             query = user_input[len("search:") :].strip()
