@@ -54,6 +54,13 @@ To run the CLI client application:
 python -m app.cli_interface
 ```
 
+### API Documentation
+
+Once the API service is running, you can access the interactive API documentation at:
+
+- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
 ### Chat Module
 
 The chat module allows you to interact with the assistant:
