@@ -18,7 +18,6 @@ except ImportError as e:
     api_module = None
     logger.info(f"API module could not be imported: {e}. API functionality is disabled.")
 
-
 # Try to import and initialize SearchModule
 try:
     from search_module import SearchModule
@@ -27,6 +26,16 @@ except ImportError as e:
     search_module = None
     logger.info(
         f"Search module could not be initialized: {e}. Search functionality is disabled."
+    )
+
+# Try to import and initialize WikiSummaryModule
+try:
+    from wiki_summary_module import WikiSummaryModule
+    wiki_summary_module = WikiSummaryModule(config, logger)
+except ImportError as e:
+    wiki_summary_module = None
+    logger.info(
+        f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled."
     )
 
 while True:
@@ -54,6 +63,13 @@ while True:
             print(f"Search Results: {results}")
         else:
             print("Search functionality is disabled due to missing dependencies.")
+    elif user_input.startswith("wiki:"):
+        if wiki_summary_module:
+            page_title = user_input[len("wiki:") :].strip()
+            summary = wiki_summary_module.summarize_wikipedia_page(page_title)
+            print(f"Summary: {summary}")
+        else:
+            print("WikiSummary functionality is disabled due to import issues.")
     else:
         response = chat_module.chat(user_input)
         print(f"Agent: {response}")

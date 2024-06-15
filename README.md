@@ -12,10 +12,22 @@ To install the necessary dependencies, run the following command:
 pip install .
 ```
 
+To include optional dependencies for the `vllm_provider`:
+
+```bash
+pip install ".[vllm_provider]"
+```
+
 To include optional dependencies for the `search_module`:
 
 ```bash
 pip install ".[search_tool]"
+```
+
+To include optional dependencies for the `wiki_summary_module`:
+
+```bash
+pip install ".[wiki_tool]"
 ```
 
 ## Configuration
@@ -62,6 +74,15 @@ If the `search_module` dependencies are installed, you can perform searches usin
 ```plaintext
 > search: how to mow the lawn
 Search Results: {results}
+```
+
+### Wiki Summary Module
+
+If the `wiki_summary_module` dependencies are installed, you can summarize Wikipedia content using the `wiki:` command:
+
+```plaintext
+> wiki: Synthetic diamond
+Summary: {summary}
 ```
 
 ## Logging

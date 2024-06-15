@@ -36,6 +36,11 @@ search_tool = [
     "trafilatura",
     "readability-lxml"
 ]
+wiki_tool = [
+    "pydantic", 
+    "ragatouille",
+    "typing-extensions" # Use typing-extensions for compatibility across different Python versions
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
