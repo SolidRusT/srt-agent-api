@@ -1,6 +1,6 @@
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
-from chat_module import ChatModule
+from app.modules.chat_module import ChatModule
 
 config = Config()
 logger = Logger()
@@ -12,7 +12,7 @@ chat_module = ChatModule(config, logger)
 
 # Try to import and initialize APIModule
 try:
-    from api_module import APIModule
+    from app.modules.api_module import APIModule
     api_module = APIModule(config, logger)
 except ImportError as e:
     api_module = None
@@ -20,7 +20,7 @@ except ImportError as e:
 
 # Try to import and initialize SearchModule
 try:
-    from search_module import SearchModule
+    from app.modules.search_module import SearchModule
     search_module = SearchModule(config, logger)
 except ImportError as e:
     search_module = None
@@ -30,7 +30,7 @@ except ImportError as e:
 
 # Try to import and initialize WikiSummaryModule
 try:
-    from wiki_summary_module import WikiSummaryModule
+    from app.modules.wiki_summary_module import WikiSummaryModule
     wiki_summary_module = WikiSummaryModule(config, logger)
 except ImportError as e:
     wiki_summary_module = None

@@ -1,6 +1,7 @@
 import unittest
+import requests
 from unittest.mock import patch, Mock
-from api_module import APIModule
+from app.modules.api_module import APIModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 

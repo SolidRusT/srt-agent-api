@@ -1,0 +1,1 @@
+from app.modules.wiki_summary_module import WikiSummaryModule
