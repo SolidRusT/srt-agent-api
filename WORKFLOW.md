@@ -23,7 +23,7 @@ To run the tests locally, follow these steps:
 3. Run the tests using the provided script:
 
     ```bash
-    python run_tests.py
+    python -m app.test_runner
     ```
 
 ## CI Workflow

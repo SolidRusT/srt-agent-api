@@ -45,4 +45,9 @@ wiki_tool = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["app"]
+where = ["src"]
+
+[project.scripts]
+start-api = "app.api_service:main"
+run-cli = "app.cli_interface:main"
+run-tests = "app.test_runner:run_tests"
