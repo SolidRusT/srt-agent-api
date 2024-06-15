@@ -7,7 +7,7 @@ name = "srt-web-chat"
 version = "0.1.0"
 description = "A modular web chat application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "SolidRusT Networks", email = "info@solidrust.net"}
