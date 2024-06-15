@@ -21,6 +21,51 @@ jobs:
         pip install setuptools wheel
         pip install .
 
+    - name: Create mock config file
+      run: |
+        echo "
+        debug: true
+
+        logs_path: \"./logs\"
+
+        default_llm_name: \"default\"
+        summary_llm_name: \"summary\"
+        chat_llm_name: \"chat\"
+
+        llms:
+          default:
+            type: \"llama_cpp\"
+            filename: \"default-model.bin\"
+            huggingface: \"huggingface-model\"
+            url: \"http://mock-llm-server\"
+            agent_provider: \"llama_cpp_server\"
+            server: \"mock-server\"
+            max_tokens: 100
+          summary:
+            type: \"llama_cpp\"
+            filename: \"summary-model.bin\"
+            huggingface: \"huggingface-summary-model\"
+            url: \"http://mock-llm-server\"
+            agent_provider: \"llama_cpp_server\"
+            server: \"mock-server\"
+            max_tokens: 100
+          chat:
+            type: \"llama_cpp\"
+            filename: \"chat-model.bin\"
+            huggingface: \"huggingface-chat-model\"
+            url: \"http://mock-llm-server\"
+            agent_provider: \"llama_cpp_server\"
+            server: \"mock-server\"
+            max_tokens: 100
+
+        openai_compatible_api_key: \"mock-api-key\"
+        personas:
+          Default:
+            name: \"Veronica\"
+            system_message: \"You are Veronica, an AI assistant.\"
+            prompt_message: \"How can I help you today?\"
+        " > config.yaml
+
     - name: Build package
       run: |
         python setup.py sdist bdist_wheel
