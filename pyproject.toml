@@ -45,7 +45,7 @@ wiki_tool = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["app"]
 
 [project.scripts]
 start-api = "app.api_service:main"
