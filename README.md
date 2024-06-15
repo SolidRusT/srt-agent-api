@@ -43,7 +43,7 @@ cp config-example.yaml config.yaml
 To start the API service:
 
 ```bash
-uvicorn app.api_service:app --reload --app-dir .
+python -m app.api_service
 ```
 
 ### Running the Application
