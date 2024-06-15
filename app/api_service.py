@@ -7,6 +7,7 @@ from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
+import uvicorn
 
 app = FastAPI(
     title="srt-web-chat API",
@@ -22,6 +23,10 @@ app = FastAPI(
 config = Config()
 logger = Logger()
 chat_module = ChatModule(config, logger)
+
+server_name = config.server_name
+server_port = config.server_port
+logger.info(f"Starting API service on: {server_name}:{server_port}.")
 
 # Initialize modules with error handling
 try:
@@ -98,3 +103,5 @@ def wiki_summary(title: str):
         logger.error(f"Error fetching wiki summary for title: {title}, error: {e}")
         raise HTTPException(status_code=500, detail="Error fetching wiki summary")
 
+if __name__ == "__main__":
+    uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=True, app_dir=".")
