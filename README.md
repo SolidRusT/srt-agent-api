@@ -142,6 +142,8 @@ Logs are stored in the `logs` directory. You can check the logs for detailed inf
 
 Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/SolidRusT/srt-web-chat).
 
+For detailed information on running tests and the CI workflow, see the [Workflow Documentation](WORKFLOW.md).
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
