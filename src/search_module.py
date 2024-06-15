@@ -1,11 +1,15 @@
 import importlib.util
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
+from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
+from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings
+from llama_cpp_agent.prompt_templates import web_search_system_prompt
+from llama_cpp_agent.providers import VLLMServerProvider, LlamaCppServerProvider, TGIServerProvider
 
 class SearchModule:
-    def __init__(self, config):
+    def __init__(self, config, logger):
         self.config = config
-        self.logger = Logger()
+        self.logger = logger
         self.dependencies_available = self._check_dependencies()
         
         if self.dependencies_available:
@@ -14,9 +18,13 @@ class SearchModule:
             self.search_tool = self._initialize_search_tool()
             self.settings = self.provider.get_provider_default_settings()
             self._configure_settings()
-            self.output_settings = LlmStructuredOutputSettings.from_functions(
-                [self.search_tool.get_tool(), self.write_message_to_user]
-            )
+            try:
+                self.output_settings = LlmStructuredOutputSettings.from_functions(
+                    [self.search_tool.get_tool(), self.write_message_to_user]
+                )
+            except AssertionError as e:
+                self.logger.error(f"Error creating structured output settings: {e}")
+                raise
         else:
             self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
 
@@ -30,14 +38,22 @@ class SearchModule:
 
     def _initialize_provider(self):
         llm_settings = self.config.default_llm_settings
-        from llama_cpp_agent.providers import LlamaCppServerProvider
-        return LlamaCppServerProvider(
-            llm_settings["url"]
-        )
+        if llm_settings["agent_provider"] == "vllm_server":
+            return VLLMServerProvider(
+                llm_settings["url"],
+                llm_settings["filename"],
+                llm_settings["huggingface"],
+                self.config.openai_compatible_api_key,
+            )
+        elif llm_settings["agent_provider"] == "llama_cpp_server":
+            return LlamaCppServerProvider(llm_settings["url"])
+        elif llm_settings["agent_provider"] == "tgi_server":
+            return TGIServerProvider(server_address=llm_settings["url"])
+        else:
+            self.logger.error(f"Unsupported provider: {llm_settings['agent_provider']}")
+            raise ValueError(f"Unsupported provider: {llm_settings['agent_provider']}")
 
     def _initialize_agent(self):
-        from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
-        from llama_cpp_agent.prompt_templates import web_search_system_prompt
         return LlamaCppAgent(
             self.provider,
             debug_output=True,
@@ -60,6 +76,9 @@ class SearchModule:
 
     @staticmethod
     def write_message_to_user():
+        """
+        This function simulates writing a message to the user.
+        """
         return "Please write the message to the user."
 
     def search(self, query):
@@ -83,7 +102,8 @@ class SearchModule:
 # Example usage
 if __name__ == "__main__":
     config = Config()
-    search_module = SearchModule(config)
+    logger = Logger()
+    search_module = SearchModule(config, logger)
     while True:
         user_input = input(">")
         if user_input == "exit":

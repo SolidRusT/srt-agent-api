@@ -37,13 +37,13 @@ srt-web-chat is a modular web chat application that integrates the `srt-core` co
    For vLLM Provider:
 
    ```bash
-   pip install .[vllm_provider]
+   pip install ".[vllm_provider]"
    ```
 
    For Search Tool:
 
    ```bash
-   pip install .[search_tool]
+   pip install ".[search_tool]"
    ```
 
 ## Configuration

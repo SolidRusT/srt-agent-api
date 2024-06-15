@@ -1,6 +1,6 @@
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
-from basic_chat import BasicChat
+from chat_module import ChatModule
 
 config = Config()
 logger = Logger()
@@ -8,12 +8,12 @@ logger = Logger()
 if config.debug:
     print("Debug mode is enabled")
 
-chat_module = BasicChat(config)
+chat_module = ChatModule(config,logger)
 
 # Try to import and initialize SearchModule
 try:
     from search_module import SearchModule
-    search_module = SearchModule(config)
+    search_module = SearchModule(config, logger)
 except ImportError as e:
     search_module = None
     logger.info(f"Search module dependencies are not installed: {e}. Search functionality is disabled.")
