@@ -1,3 +1,4 @@
+import sys
 import importlib.util
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
@@ -5,6 +6,7 @@ from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
 from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings
 from llama_cpp_agent.prompt_templates import web_search_system_prompt
 from llama_cpp_agent.providers import VLLMServerProvider, LlamaCppServerProvider, TGIServerProvider
+from llama_cpp_agent.tools import WebSearchTool
 
 class SearchModule:
     def __init__(self, config, logger):
@@ -29,11 +31,19 @@ class SearchModule:
             self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
 
     def _check_dependencies(self):
-        required_modules = ["readability", "trafilatura"]
+        self.logger.info(f"Python executable: {sys.executable}")
+        self.logger.info(f"sys.path: {sys.path}")
+        required_modules = ["llama_cpp_agent", "readability-lxml", "trafilatura"]
+        missing_modules = []
         for module in required_modules:
-            if not importlib.util.find_spec(module):
+            try:
+                __import__(module)
+            except ImportError:
                 self.logger.warning(f"Module {module} is not installed.")
-                return False
+                missing_modules.append(module)
+        if missing_modules:
+            self.logger.error(f"Missing required modules: {', '.join(missing_modules)}")
+            return False
         return True
 
     def _initialize_provider(self):
@@ -41,7 +51,7 @@ class SearchModule:
         if llm_settings["agent_provider"] == "vllm_server":
             return VLLMServerProvider(
                 llm_settings["url"],
-                llm_settings["filename"],
+                llm_settings["huggingface"],
                 llm_settings["huggingface"],
                 self.config.openai_compatible_api_key,
             )
@@ -63,7 +73,6 @@ class SearchModule:
         )
 
     def _initialize_search_tool(self):
-        from llama_cpp_agent.tools import WebSearchTool
         return WebSearchTool(
             self.provider,
             MessagesFormatterType.MISTRAL,

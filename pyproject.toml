@@ -33,7 +33,6 @@ vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
 search_tool = [
     "pypdf", 
     "trafilatura",
-    "readability",
     "readability-lxml"
 ]
 
