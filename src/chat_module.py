@@ -19,9 +19,10 @@ class ChatModule:
         )
 
     def _initialize_agent(self):
+        default_agent_name = self.config.persona_full_name
         default_system_prompt = self.config.persona_system_message
         default_persona = self.config.persona_prompt_message
-        default_prompt = default_system_prompt + " " + default_persona
+        default_prompt = default_system_prompt + "\nMy name is " + default_agent_name + ".\n" + default_persona + "\n"
         return LlamaCppAgent(
             self.provider,
             system_prompt=default_prompt,

@@ -13,3 +13,9 @@ Search Tool
 ```bash
 pip install pypdf trafilatura readability
 ```
+
+```bash
+export PERSONA='Default'
+export PORT=8650
+export SERVER_NAME='0.0.0.0'
+```
