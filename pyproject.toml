@@ -30,7 +30,12 @@ Homepage = "https://github.com/SolidRusT/srt-web-chat"
 
 [project.optional-dependencies]
 vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
-search_tool = ["pypdf", "trafilatura", "readability-lxml"]
+search_tool = [
+    "pypdf", 
+    "trafilatura",
+    "readability",
+    "readability-lxml"
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

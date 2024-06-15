@@ -29,7 +29,7 @@ class SearchModule:
             self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
 
     def _check_dependencies(self):
-        required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
+        required_modules = ["readability", "trafilatura"]
         for module in required_modules:
             if not importlib.util.find_spec(module):
                 self.logger.warning(f"Module {module} is not installed.")
