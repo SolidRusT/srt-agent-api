@@ -15,6 +15,7 @@ class SearchModule:
         self.dependencies_available = self._check_dependencies()
         
         if self.dependencies_available:
+            self.logger.info("All dependencies are available. Initializing search module.")
             self.provider = self._initialize_provider()
             self.agent = self._initialize_agent()
             self.search_tool = self._initialize_search_tool()
@@ -33,11 +34,12 @@ class SearchModule:
     def _check_dependencies(self):
         self.logger.info(f"Python executable: {sys.executable}")
         self.logger.info(f"sys.path: {sys.path}")
-        required_modules = ["llama_cpp_agent", "readability-lxml", "trafilatura"]
+        required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
         missing_modules = []
         for module in required_modules:
             try:
                 __import__(module)
+                self.logger.info(f"Module {module} is installed.")
             except ImportError:
                 self.logger.warning(f"Module {module} is not installed.")
                 missing_modules.append(module)
@@ -48,6 +50,7 @@ class SearchModule:
 
     def _initialize_provider(self):
         llm_settings = self.config.default_llm_settings
+        self.logger.info(f"Initializing provider with settings: {llm_settings}")
         if llm_settings["agent_provider"] == "vllm_server":
             return VLLMServerProvider(
                 llm_settings["url"],
@@ -64,6 +67,7 @@ class SearchModule:
             raise ValueError(f"Unsupported provider: {llm_settings['agent_provider']}")
 
     def _initialize_agent(self):
+        self.logger.info("Initializing LlamaCppAgent.")
         return LlamaCppAgent(
             self.provider,
             debug_output=True,
@@ -73,13 +77,27 @@ class SearchModule:
         )
 
     def _initialize_search_tool(self):
-        return WebSearchTool(
-            self.provider,
-            MessagesFormatterType.MISTRAL,
-            max_tokens_search_results=20000
-        )
+        try:
+            from readability import Document
+            self.logger.info("Successfully imported Document from readability.")
+        except ImportError as e:
+            self.logger.error(f"Cannot import Document from readability: {e}")
+            raise
+
+        try:
+            from llama_cpp_agent.tools import WebSearchTool
+            self.logger.info("Successfully imported WebSearchTool from llama_cpp_agent.tools.")
+            return WebSearchTool(
+                self.provider,
+                MessagesFormatterType.MISTRAL,
+                max_tokens_search_results=20000
+            )
+        except ImportError as e:
+            self.logger.error(f"Cannot import WebSearchTool: {e}")
+            raise
 
     def _configure_settings(self):
+        self.logger.info("Configuring settings.")
         self.settings.temperature = 0.65
         self.settings.max_tokens = 2048
 

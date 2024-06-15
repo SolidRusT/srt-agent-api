@@ -46,6 +46,12 @@ srt-web-chat is a modular web chat application that integrates the `srt-core` co
    pip install ".[search_tool]"
    ```
 
+   Or both at once:
+
+   ```bash
+   pip install ".[vllm_provider,search_tool]"
+   ```
+
 ## Configuration
 
 1. Copy the example configuration file to create your own configuration:
