@@ -1,130 +1,77 @@
 # srt-web-chat
 
-srt-web-chat is a modular web chat application that integrates the `srt-core` configuration system and the `llama-cpp-agent` framework. It provides a robust foundation for building LLM-based AI agents with flexible configurations and logging.
+## Overview
 
-## Features
-
-- Modular architecture for easy extension and integration.
-- Configurable via a YAML file.
-- Integrates with `srt-core` for configuration and logging.
-- Uses `llama-cpp-agent` for LLM interactions.
-- Supports multiple LLM providers.
+`srt-web-chat` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching.
 
 ## Installation
 
-1. Clone the repository:
+To install the necessary dependencies, run the following command:
 
-   ```bash
-   git clone https://github.com/SolidRusT/srt-web-chat.git
-   cd srt-web-chat
-   ```
+```bash
+pip install .
+```
 
-2. Create and activate a virtual environment:
+To include optional dependencies for the `search_module`:
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-3. Install the base dependencies and the project:
-
-   ```bash
-   pip install .
-   ```
-
-4. Install optional dependencies as needed:
-
-   For vLLM Provider:
-
-   ```bash
-   pip install ".[vllm_provider]"
-   ```
-
-   For Search Tool:
-
-   ```bash
-   pip install ".[search_tool]"
-   ```
-
-   Or both at once:
-
-   ```bash
-   pip install ".[vllm_provider,search_tool]"
-   ```
+```bash
+pip install ".[search_tool]"
+```
 
 ## Configuration
 
-1. Copy the example configuration file to create your own configuration:
+Copy `config-example.yaml` to `config.yaml` and customize it according to your needs.
 
-   ```bash
-   cp config-example.yaml config.yaml
-   ```
-
-2. Customize the `config.yaml` file with your own settings.
+```bash
+cp config-example.yaml config.yaml
+```
 
 ## Usage
 
-Run the main application:
+Run the application:
 
 ```bash
 python src/app.py
 ```
 
-## Building the Project
+### Chat Module
 
-To build the project, ensure you have the build tool installed:
-
-```bash
-pip install build
-```
-
-Then, build the project:
-
-```bash
-python -m build
-```
-
-This will generate the distribution packages in the `dist` directory.
-
-## Running Tests
-
-To run the tests, you can use `unittest` or `pytest`. For example, with `pytest`:
-
-```bash
-pip install pytest
-pytest
-```
-
-## Project Structure
+The chat module allows you to interact with the assistant:
 
 ```plaintext
-srt-web-chat/
-│
-├── LICENSE
-├── README.md
-├── config.yaml
-├── pyproject.toml
-├── src/
-│   ├── app.py
-│   ├── chat_module.py
-│   ├── llm_provider.py
-│   ├── main.py
-│   ├── search_module.py
-└── tests/
-    ├── test_chat_module.py
-    ├── test_llm_provider.py
-    ├── test_main.py
-    └── test_search_module.py
+> Hi, my name is Jeff.
+Agent: Hello, Jeff! How can I assist you today?
 ```
+
+### API Module
+
+You can fetch data from an API using the `fetch:` command:
+
+```plaintext
+> fetch: https://jsonplaceholder.typicode.com/posts/1
+Fetched Data: {data}
+
+> fetch_list: https://jsonplaceholder.typicode.com/posts
+Fetched Data List: [{data1}, {data2}, ...]
+```
+
+### Search Module
+
+If the `search_module` dependencies are installed, you can perform searches using the `search:` command:
+
+```plaintext
+> search: how to mow the lawn
+Search Results: {results}
+```
+
+## Logging
+
+Logs are stored in the `logs` directory. You can check the logs for detailed information about the application's behavior and any issues encountered.
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
+Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/SolidRusT/srt-web-chat).
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For more information, please contact SolidRusT Networks at [info@solidrust.net](mailto:info@solidrust.net).
