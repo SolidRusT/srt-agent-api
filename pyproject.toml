@@ -39,8 +39,8 @@ search_tool = [
 wiki_tool = [
     "pydantic", 
     "ragatouille",
-    "typing-extensions" # Use typing-extensions for compatibility across different Python versions
+    "typing-extensions"
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["app"]
