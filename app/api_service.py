@@ -2,6 +2,9 @@ import requests
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from app.modules.chat_module import ChatModule
+from app.modules.api_module import APIModule
+from app.modules.search_module import SearchModule
+from app.modules.wiki_summary_module import WikiSummaryModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
@@ -20,6 +23,25 @@ config = Config()
 logger = Logger()
 chat_module = ChatModule(config, logger)
 
+# Initialize modules with error handling
+try:
+    api_module = APIModule(config, logger)
+except ImportError as e:
+    api_module = None
+    logger.info(f"API module could not be imported: {e}. API functionality is disabled.")
+
+try:
+    search_module = SearchModule(config, logger)
+except ImportError as e:
+    search_module = None
+    logger.info(f"Search module could not be initialized: {e}. Search functionality is disabled.")
+
+try:
+    wiki_summary_module = WikiSummaryModule(config, logger)
+except ImportError as e:
+    wiki_summary_module = None
+    logger.info(f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled.")
+
 class ChatRequest(BaseModel):
     message: str
 
@@ -33,23 +55,25 @@ def health_check():
 
 @app.get("/fetch", summary="Fetch Data", tags=["API Module"])
 def fetch_data(url: str = Query(..., description="URL to fetch data from")):
+    if not api_module:
+        raise HTTPException(status_code=501, detail="API functionality is disabled.")
     logger.debug(f"Fetching data from URL: {url}")
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as e:
+        response = api_module.fetch_data(url)
+        return response
+    except Exception as e:
         logger.error(f"Error fetching data from URL: {url}, error: {e}")
         raise HTTPException(status_code=404, detail="Error fetching data")
 
 @app.get("/fetch-list", summary="Fetch Data List", tags=["API Module"])
 def fetch_data_list(url: str = Query(..., description="URL to fetch list data from")):
+    if not api_module:
+        raise HTTPException(status_code=501, detail="API functionality is disabled.")
     logger.debug(f"Fetching list from URL: {url}")
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as e:
+        response = api_module.fetch_data_list(url)
+        return response
+    except Exception as e:
         logger.error(f"Error fetching list from URL: {url}, error: {e}")
         raise HTTPException(status_code=404, detail="Error fetching data list")
 
@@ -64,6 +88,13 @@ async def chat(request: ChatRequest):
 
 @app.get("/wiki-summary/{title}", summary="Get Wikipedia Summary", tags=["Wiki Summary Module"])
 def wiki_summary(title: str):
+    if not wiki_summary_module:
+        raise HTTPException(status_code=501, detail="WikiSummary functionality is disabled.")
     logger.debug(f"Fetching wiki summary for title: {title}")
-    # Implement wiki summary logic here
-    return {"summary": "WikiSummary functionality is disabled due to missing dependencies."}
+    try:
+        summary = wiki_summary_module.summarize_wikipedia_page(title)
+        return {"summary": summary}
+    except Exception as e:
+        logger.error(f"Error fetching wiki summary for title: {title}, error: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching wiki summary")
+

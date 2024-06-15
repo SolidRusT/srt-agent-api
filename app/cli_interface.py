@@ -1,31 +1,72 @@
-import requests
-
-API_BASE_URL = "http://127.0.0.1:8000"
+from app.modules.chat_module import ChatModule
+from app.modules.api_module import APIModule
+from app.modules.search_module import SearchModule
+from app.modules.wiki_summary_module import WikiSummaryModule
+from srt_core.config import Config
+from srt_core.utils.logger import Logger
 
 def main():
+    config = Config()
+    logger = Logger()
+
+    chat_module = ChatModule(config, logger)
+
+    # Try to import and initialize APIModule
+    try:
+        api_module = APIModule(config, logger)
+    except ImportError as e:
+        api_module = None
+        logger.info(f"API module could not be imported: {e}. API functionality is disabled.")
+
+    # Try to import and initialize SearchModule
+    try:
+        search_module = SearchModule(config, logger)
+    except ImportError as e:
+        search_module = None
+        logger.info(f"Search module could not be initialized: {e}. Search functionality is disabled.")
+
+    # Try to import and initialize WikiSummaryModule
+    try:
+        wiki_summary_module = WikiSummaryModule(config, logger)
+    except ImportError as e:
+        wiki_summary_module = None
+        logger.info(f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled.")
+
     while True:
         user_input = input(">")
         if user_input == "exit":
             break
         elif user_input.startswith("fetch:"):
-            url = user_input[len("fetch:"):].strip()
-            response = requests.get(f"{API_BASE_URL}/fetch", params={"url": url})
-            print(f"Fetched Data: {response.json()}")
+            if api_module:
+                url = user_input[len("fetch:"):].strip()
+                data = api_module.fetch_data(url)
+                print(f"Fetched Data: {data}")
+            else:
+                print("API functionality is disabled due to import issues.")
         elif user_input.startswith("fetch_list:"):
-            url = user_input[len("fetch_list:"):].strip()
-            response = requests.get(f"{API_BASE_URL}/fetch_list", params={"url": url})
-            print(f"Fetched Data List: {response.json()}")
+            if api_module:
+                url = user_input[len("fetch_list:"):].strip()
+                data_list = api_module.fetch_data_list(url)
+                print(f"Fetched Data List: {data_list}")
+            else:
+                print("API functionality is disabled due to import issues.")
         elif user_input.startswith("search:"):
-            query = user_input[len("search:"):].strip()
-            response = requests.get(f"{API_BASE_URL}/search", params={"query": query})
-            print(f"Search Results: {response.json()}")
+            if search_module:
+                query = user_input[len("search:"):].strip()
+                results = search_module.search(query)
+                print(f"Search Results: {results}")
+            else:
+                print("Search functionality is disabled due to missing dependencies.")
         elif user_input.startswith("wiki:"):
-            title = user_input[len("wiki:"):].strip()
-            response = requests.get(f"{API_BASE_URL}/wiki", params={"title": title})
-            print(f"Summary: {response.json()}")
+            if wiki_summary_module:
+                page_title = user_input[len("wiki:"):].strip()
+                summary = wiki_summary_module.summarize_wikipedia_page(page_title)
+                print(f"Summary: {summary}")
+            else:
+                print("WikiSummary functionality is disabled due to import issues.")
         else:
-            response = requests.post(f"{API_BASE_URL}/chat", json={"message": user_input})
-            print(f"Agent: {response.json()['response']}")
+            response = chat_module.chat(user_input)
+            print(f"Agent: {response}")
 
 if __name__ == "__main__":
     main()
