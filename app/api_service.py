@@ -1,30 +1,41 @@
-from fastapi import FastAPI
-from app.modules.wiki_summary_module import WikiSummaryModule
-from srt_core.config import Config
-from srt_core.utils.logger import Logger
-
-config = Config()
-logger = Logger()
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import requests
+import logging
 
 app = FastAPI()
 
-# Initialize WikiSummaryModule
-try:
-    wiki_summary_module = WikiSummaryModule(config, logger)
-except ImportError as e:
-    wiki_summary_module = None
-    logger.info(
-        f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled."
-    )
+logging.basicConfig(level=logging.DEBUG)
 
 @app.get("/")
-def read_root():
+def health_check():
+    logging.debug("Health check endpoint called")
     return {"message": "Welcome to the srt-web-chat API"}
 
+@app.get("/fetch")
+def fetch_data(url: str):
+    logging.debug(f"Fetching data from URL: {url}")
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logging.error(f"Error fetching data from URL: {url}, error: {e}")
+        raise HTTPException(status_code=404, detail="Error fetching data")
+
+@app.get("/fetch-list")
+def fetch_data_list(url: str):
+    logging.debug(f"Fetching list from URL: {url}")
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logging.error(f"Error fetching list from URL: {url}, error: {e}")
+        raise HTTPException(status_code=404, detail="Error fetching data list")
+
 @app.get("/wiki-summary/{title}")
-def get_wiki_summary(title: str):
-    if wiki_summary_module:
-        summary = wiki_summary_module.summarize_wikipedia_page(title)
-        return {"summary": summary}
-    else:
-        return {"error": "WikiSummary functionality is disabled due to missing dependencies"}
+def wiki_summary(title: str):
+    logging.debug(f"Fetching wiki summary for title: {title}")
+    # Implement wiki summary logic here
+    return {"summary": "WikiSummary functionality is disabled due to missing dependencies."}
