@@ -14,7 +14,7 @@ authors = [
 ]
 
 dependencies = [
-    "srt-core>=0.1.11",
+    "srt-core>=0.1.14",
     "llama-cpp-python>=0.2.60",
     "llama-cpp-agent>=0.2.32",
     "requests>=2.31.0"

@@ -40,18 +40,18 @@ cp config-example.yaml config.yaml
 
 ## Usage
 
-### Running the Application
-
-To run the CLI application:
-
-```bash
-python -m app.cli_interface
-```
-
 To start the API service:
 
 ```bash
 uvicorn app.api_service:app --reload --app-dir .
+```
+
+### Running the Application
+
+To run the CLI client application:
+
+```bash
+python -m app.cli_interface
 ```
 
 ### Chat Module
