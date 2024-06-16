@@ -1,44 +1,44 @@
 import importlib.util
+import sys
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
 from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings
 from llama_cpp_agent.prompt_templates import web_search_system_prompt
 from llama_cpp_agent.providers import VLLMServerProvider, LlamaCppServerProvider, TGIServerProvider
+from llama_cpp_agent.tools import WebSearchTool
 
 class SearchModule:
     def __init__(self, config, logger):
         self.config = config
         self.logger = logger
         self.dependencies_available = self._check_dependencies()
-
+        
         if self.dependencies_available:
-            self.logger.info("All dependencies are available. Initializing search module.")
             self.provider = self._initialize_provider()
             self.agent = self._initialize_agent()
             self.search_tool = self._initialize_search_tool()
             self.settings = self.provider.get_provider_default_settings()
             self._configure_settings()
-            if self.search_tool:
-                try:
-                    self.output_settings = LlmStructuredOutputSettings.from_functions(
-                        [self.search_tool.get_tool(), self.write_message_to_user]
-                    )
-                except AssertionError as e:
-                    self.logger.error(f"Error creating structured output settings: {e}")
-                    raise
-            else:
-                self.logger.error("Search tool could not be initialized.")
-                self.output_settings = None
+            try:
+                self.output_settings = LlmStructuredOutputSettings.from_functions(
+                    [self.search_tool.get_tool(), self.write_message_to_user]
+                )
+            except AssertionError as e:
+                self.logger.error(f"Error creating structured output settings: {e}")
+                raise
         else:
             self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
-            self.output_settings = None
 
     def _check_dependencies(self):
+        self.logger.info(f"Python executable: {sys.executable}")
+        self.logger.info(f"sys.path: {sys.path}")
         required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
         missing_modules = []
         for module in required_modules:
-            if not importlib.util.find_spec(module):
+            try:
+                __import__(module)
+            except ImportError:
                 self.logger.warning(f"Module {module} is not installed.")
                 missing_modules.append(module)
         if missing_modules:

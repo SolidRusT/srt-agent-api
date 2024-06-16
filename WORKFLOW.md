@@ -11,7 +11,7 @@ To run the tests locally, follow these steps:
 1. Ensure all dependencies are installed:
 
     ```bash
-    pip install .
+    pip install ".[vllm_provider,search_tool,wiki_tool]"
     ```
 
 2. Copy the example configuration file to `config.yaml`:
