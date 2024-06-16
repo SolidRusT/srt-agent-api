@@ -1,15 +1,16 @@
-import json
-from pydantic import BaseModel, Field
-from typing import List
-from ragatouille.utils import get_wikipedia_page
-from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings, LlmStructuredOutputType
-from llama_cpp_agent.messages_formatter import MessagesFormatterType
-from llama_cpp_agent.llm_agent import LlamaCppAgent
-from llama_cpp_agent.rag.rag_colbert_reranker import RAGColbertReranker
-from llama_cpp_agent.text_utils import RecursiveCharacterTextSplitter
-from llama_cpp_agent.providers import LlamaCppServerProvider, VLLMServerProvider, TGIServerProvider
+import importlib.util
+import sys
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
+from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
+from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings, LlmStructuredOutputType
+from llama_cpp_agent.providers import VLLMServerProvider, LlamaCppServerProvider, TGIServerProvider
+from llama_cpp_agent.rag.rag_colbert_reranker import RAGColbertReranker
+from llama_cpp_agent.text_utils import RecursiveCharacterTextSplitter
+from ragatouille.utils import get_wikipedia_page
+from typing import List
+from pydantic import BaseModel, Field
+import json
 
 class WikipediaQueryModule:
     def __init__(self, config, logger):
@@ -28,11 +29,12 @@ class WikipediaQueryModule:
                 length_function=len,
                 keep_separator=True
             )
+            self.output_settings = self._initialize_output_settings()
         else:
             self.logger.info("Wikipedia Query module dependencies are not installed. Disabling functionality.")
     
     def _check_dependencies(self):
-        required_modules = ["llama_cpp_agent", "ragatouille"]
+        required_modules = ["llama_cpp_agent", "ragatouille", "chromadb"]
         missing_modules = []
         for module in required_modules:
             try:
@@ -72,57 +74,56 @@ class WikipediaQueryModule:
             predefined_messages_formatter_type=MessagesFormatterType.MISTRAL,
         )
 
+    def _initialize_output_settings(self):
+        class QueryExtension(BaseModel):
+            queries: List[str] = Field(default_factory=list, description="List of queries.")
+        
+        return LlmStructuredOutputSettings.from_pydantic_models(
+            [QueryExtension], LlmStructuredOutputType.object_instance
+        )
+
     def process_wikipedia_query(self, page_url: str, query: str):
-        try:
-            page_content = get_wikipedia_page(page_url)
-            splits = self.splitter.split_text(page_content)
+        if not self.dependencies_available:
+            return "Wikipedia Query functionality is disabled due to missing dependencies."
 
-            for split in splits:
-                self.rag.add_document(split)
+        # Use the ragatouille helper function to get the content of a Wikipedia page.
+        page_content = get_wikipedia_page(page_url)
 
-            class QueryExtension(BaseModel):
-                queries: List[str] = Field(default_factory=list, description="List of queries.")
+        # Split the text of the Wikipedia page into chunks for the vector database.
+        splits = self.splitter.split_text(page_content)
 
-            output_settings = LlmStructuredOutputSettings.from_pydantic_models([QueryExtension], LlmStructuredOutputType.object_instance)
+        # Add the splits into the vector database
+        for split in splits:
+            self.rag.add_document(split)
 
-            query_extension_agent = LlamaCppAgent(
-                self.provider,
-                debug_output=True,
-                system_prompt="You are a world class query extension algorithm capable of extending queries by writing new queries. Do not answer the queries, simply provide a list of additional queries in JSON format.",
-                predefined_messages_formatter_type=MessagesFormatterType.MISTRAL
-            )
+        # Perform the query extension with the agent.
+        output = self.agent.get_chat_response(
+            f"Consider the following query: {query}", structured_output_settings=self.output_settings
+        )
 
-            output = query_extension_agent.get_chat_response(
-                f"Consider the following query: {query}", structured_output_settings=output_settings)
+        # Load the query extension in JSON format and create an instance of the query extension model.
+        queries = self.output_settings.models[0].model_validate(json.loads(output))
 
-            queries = QueryExtension.model_validate(json.loads(output))
+        # Define the final prompt for the query with the retrieved information
+        prompt = "Consider the following context:\n==========Context===========\n"
 
-            prompt = "Consider the following context:\n==========Context===========\n"
+        # Retrieve the most fitting document chunks based on the original query and add them to the prompt.
+        documents = self.rag.retrieve_documents(query, k=3)
+        for doc in documents:
+            prompt += doc["content"] + "\n\n"
 
-            documents = self.rag.retrieve_documents(query, k=3)
+        # Retrieve the most fitting document chunks based on the extended queries and add them to the prompt.
+        for extended_query in queries.queries:
+            documents = self.rag.retrieve_documents(extended_query, k=3)
             for doc in documents:
-                prompt += doc["content"] + "\n\n"
+                if doc["content"] not in prompt:
+                    prompt += doc["content"] + "\n\n"
+        
+        prompt += "\n======================\nQuestion: " + query
 
-            for qu in queries.queries:
-                documents = self.rag.retrieve_documents(qu, k=3)
-                for doc in documents:
-                    if doc["content"] not in prompt:
-                        prompt += doc["content"] + "\n\n"
-            prompt += "\n======================\nQuestion: " + query
-
-            agent_with_rag_information = LlamaCppAgent(
-                self.provider,
-                debug_output=True,
-                system_prompt="You are an advanced AI assistant, trained by OpenAI. Only answer questions based on the context information provided.",
-                predefined_messages_formatter_type=MessagesFormatterType.MISTRAL
-            )
-
-            result = agent_with_rag_information.get_chat_response(prompt)
-            return result
-
-        except Exception as e:
-            self.logger.error(f"Error processing Wikipedia query: {e}")
-            return {"error": str(e)}
+        # Ask the agent the original query with the generated prompt that contains the retrieved information.
+        result = self.agent.get_chat_response(prompt)
+        return result
 
 # Example usage
 if __name__ == "__main__":
@@ -131,5 +132,5 @@ if __name__ == "__main__":
     wikipedia_query_module = WikipediaQueryModule(config, logger)
     page_url = "https://en.wikipedia.org/wiki/Synthetic_diamond"
     query = "What is a BARS apparatus?"
-    results = wikipedia_query_module.process_wikipedia_query(page_url, query)
-    print(f"Query Results: {results}")
+    result = wikipedia_query_module.process_wikipedia_query(page_url, query)
+    print(f"Query Result: {result}")

@@ -130,6 +130,14 @@ To fetch a list of data from a URL, use the fetch list endpoint:
 curl -X GET "http://127.0.0.1:8000/fetch-list?url=https://jsonplaceholder.typicode.com/posts"
 ```
 
+### Web Search
+
+To get a summary of a Wikipedia page, use the wiki summary endpoint:
+
+```bash
+curl -X GET "http://127.0.0.1:8000/search?query=how%20to%20search%20the%20web"
+```
+
 ### Wiki Summary
 
 To get a summary of a Wikipedia page, use the wiki summary endpoint:
@@ -138,12 +146,10 @@ To get a summary of a Wikipedia page, use the wiki summary endpoint:
 curl -X GET "http://127.0.0.1:8000/wiki-summary/Python_(programming_language)"
 ```
 
-### Web Search
-
-To get a summary of a Wikipedia page, use the wiki summary endpoint:
+### Wikipedia Query
 
 ```bash
-curl -X GET "http://127.0.0.1:8000/search?query=how%20to%20search%20the%20web"
+curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FSynthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"
 ```
 
 ## Logging

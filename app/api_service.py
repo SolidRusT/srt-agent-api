@@ -12,7 +12,7 @@ import uvicorn
 app = FastAPI(
     title="srt-web-chat API",
     description="A modular web chat application integrating srt-core and llama-cpp-agent frameworks.",
-    version="0.1.2",
+    version="0.1.4",
     contact={
         "name": "SolidRusT Networks",
         "url": "https://github.com/SolidRusT/srt-web-chat",
