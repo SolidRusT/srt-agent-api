@@ -1,8 +1,8 @@
-# srt-web-chat
+# srt-agent-api
 
 ## Overview
 
-`srt-web-chat` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching and Wikipedia summaries.
+`srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching and Wikipedia summaries.
 
 ## Installation
 
@@ -158,7 +158,7 @@ Logs are stored in the `logs` directory. You can check the logs for detailed inf
 
 ## Contributing
 
-Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/SolidRusT/srt-web-chat).
+Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/SolidRusT/srt-agent-api).
 
 For detailed information on running tests and the CI workflow, see the [Workflow Documentation](WORKFLOW.md).
 

@@ -2,6 +2,7 @@ from app.modules.chat_module import ChatModule
 from app.modules.api_module import APIModule
 from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
+from app.modules.wikipedia_query_module import WikipediaQueryModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
@@ -11,26 +12,33 @@ def main():
 
     chat_module = ChatModule(config, logger)
 
-    # Try to import and initialize APIModule
+    # Initialize APIModule with error handling
     try:
         api_module = APIModule(config, logger)
     except ImportError as e:
         api_module = None
         logger.info(f"API module could not be imported: {e}. API functionality is disabled.")
 
-    # Try to import and initialize SearchModule
+    # Initialize SearchModule with error handling
     try:
         search_module = SearchModule(config, logger)
     except ImportError as e:
         search_module = None
         logger.info(f"Search module could not be initialized: {e}. Search functionality is disabled.")
 
-    # Try to import and initialize WikiSummaryModule
+    # Initialize WikiSummaryModule with error handling
     try:
         wiki_summary_module = WikiSummaryModule(config, logger)
     except ImportError as e:
         wiki_summary_module = None
         logger.info(f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled.")
+
+    # Initialize WikipediaQueryModule with error handling
+    try:
+        wikipedia_query_module = WikipediaQueryModule(config, logger)
+    except ImportError as e:
+        wikipedia_query_module = None
+        logger.info(f"Wikipedia Query module could not be initialized: {e}. Wikipedia Query functionality is disabled.")
 
     while True:
         user_input = input(">")
@@ -64,6 +72,17 @@ def main():
                 print(f"Summary: {summary}")
             else:
                 print("WikiSummary functionality is disabled due to import issues.")
+        elif user_input.startswith("wikipedia_query:"):
+            if wikipedia_query_module:
+                inputs = user_input[len("wikipedia_query:"):].strip().split(",", 1)
+                if len(inputs) == 2:
+                    page_url, query = inputs
+                    result = wikipedia_query_module.process_wikipedia_query(page_url.strip(), query.strip())
+                    print(f"Query Result: {result}")
+                else:
+                    print("Please provide both the Wikipedia page URL and the query, separated by a comma.")
+            else:
+                print("Wikipedia Query functionality is disabled due to import issues.")
         else:
             response = chat_module.chat(user_input)
             print(f"Agent: {response}")

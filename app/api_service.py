@@ -10,13 +10,13 @@ from srt_core.utils.logger import Logger
 import uvicorn
 
 app = FastAPI(
-    title="srt-web-chat API",
+    title="SRT Agent API",
     description="A modular web chat application integrating srt-core and llama-cpp-agent frameworks.",
-    version="0.1.4",
+    version="0.1.5",
     contact={
         "name": "SolidRusT Networks",
-        "url": "https://github.com/SolidRusT/srt-web-chat",
-        "email": "info@solidrust.net",
+        "url": "https://github.com/SolidRusT/srt-agent-api",
+        "email": "suparious@solidrust.net",
     },
 )
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "srt-web-chat"
-version = "0.1.4"
+version = "0.1.5"
 description = "A modular web chat application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -30,7 +30,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/SolidRusT/srt-web-chat"
+Homepage = "https://github.com/SolidRusT/srt-agent-api"
 
 [project.optional-dependencies]
 vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
