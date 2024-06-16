@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "srt-web-chat"
-version = "0.1.3"
+version = "0.1.4"
 description = "A modular web chat application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -34,17 +34,20 @@ Homepage = "https://github.com/SolidRusT/srt-web-chat"
 
 [project.optional-dependencies]
 vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
-search_tool = [
+search_module = [
     "pypdf", 
     "trafilatura",
     "readability-lxml",
     "duckduckgo_search",
     "googlesearch-python"
 ]
-wiki_tool = [
+wiki_summary_module = [
     "pydantic", 
     "ragatouille",
     "typing-extensions"
+]
+wikipedia_query_module = [
+    "chromadb"
 ]
 
 [tool.setuptools.packages.find]

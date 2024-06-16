@@ -1,10 +1,10 @@
-import requests
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from app.modules.chat_module import ChatModule
 from app.modules.api_module import APIModule
 from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
+from app.modules.wikipedia_query_module import WikipediaQueryModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 import uvicorn
@@ -47,6 +47,12 @@ except ImportError as e:
     wiki_summary_module = None
     logger.info(f"WikiSummary module could not be initialized: {e}. WikiSummary functionality is disabled.")
 
+try:
+    wikipedia_query_module = WikipediaQueryModule(config, logger)
+except ImportError as e:
+    wikipedia_query_module = None
+    logger.info(f"Wikipedia Query module could not be initialized: {e}. Wikipedia Query functionality is disabled.")
+
 class ChatRequest(BaseModel):
     message: str
 
@@ -57,6 +63,15 @@ class ChatResponse(BaseModel):
 def health_check():
     logger.debug("Health check endpoint called")
     return {"message": "Welcome to the srt-web-chat API"}
+
+@app.post("/chat", response_model=ChatResponse, summary="Chat with the Agent", tags=["Chat Module"])
+async def chat(request: ChatRequest):
+    try:
+        response = chat_module.chat(request.message)
+        return {"response": response}
+    except Exception as e:
+        logger.error(f"Error processing chat request: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.get("/fetch", summary="Fetch Data", tags=["API Module"])
 def fetch_data(url: str = Query(..., description="URL to fetch data from")):
@@ -82,14 +97,17 @@ def fetch_data_list(url: str = Query(..., description="URL to fetch list data fr
         logger.error(f"Error fetching list from URL: {url}, error: {e}")
         raise HTTPException(status_code=404, detail="Error fetching data list")
 
-@app.post("/chat", response_model=ChatResponse, summary="Chat with the Agent", tags=["Chat Module"])
-async def chat(request: ChatRequest):
+@app.get("/search", summary="Perform a Web Search", tags=["Search Module"])
+def search(query: str = Query(..., description="Query to search for")):
+    if not search_module:
+        raise HTTPException(status_code=501, detail="Search functionality is disabled.")
+    logger.debug(f"Performing search for query: {query}")
     try:
-        response = chat_module.chat(request.message)
-        return {"response": response}
+        results = search_module.search(query)
+        return {"results": results}
     except Exception as e:
-        logger.error(f"Error processing chat request: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"Error performing search for query: {query}, error: {e}")
+        raise HTTPException(status_code=500, detail="Error performing search")
 
 @app.get("/wiki-summary/{title}", summary="Get Wikipedia Summary", tags=["Wiki Summary Module"])
 def wiki_summary(title: str):
@@ -103,17 +121,17 @@ def wiki_summary(title: str):
         logger.error(f"Error fetching wiki summary for title: {title}, error: {e}")
         raise HTTPException(status_code=500, detail="Error fetching wiki summary")
 
-@app.get("/search", summary="Perform a Web Search", tags=["Search Module"])
-def search(query: str = Query(..., description="Query to search for")):
-    if not search_module:
-        raise HTTPException(status_code=501, detail="Search functionality is disabled.")
-    logger.debug(f"Performing search for query: {query}")
+@app.get("/wikipedia-query", summary="Query Wikipedia Page", tags=["Wikipedia Query Module"])
+def wikipedia_query(page_url: str, query: str):
+    if not wikipedia_query_module:
+        raise HTTPException(status_code=501, detail="Wikipedia Query functionality is disabled.")
+    logger.debug(f"Processing Wikipedia query for page: {page_url} and query: {query}")
     try:
-        results = search_module.search(query)
-        return {"results": results}
+        result = wikipedia_query_module.process_wikipedia_query(page_url, query)
+        return {"result": result}
     except Exception as e:
-        logger.error(f"Error performing search for query: {query}, error: {e}")
-        raise HTTPException(status_code=500, detail="Error performing search")
+        logger.error(f"Error processing Wikipedia query for page: {page_url} and query: {query}, error: {e}")
+        raise HTTPException(status_code=500, detail="Error processing Wikipedia query")
 
 if __name__ == "__main__":
     uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=True, app_dir=".")
