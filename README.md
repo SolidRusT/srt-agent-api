@@ -30,7 +30,13 @@ pip install ".[search_tool]"
 To include optional dependencies for the `wiki_summary_module`:
 
 ```bash
-pip install ".[wiki_tool]"
+pip install ".[wiki_summary_module]"
+```
+
+To include optional dependencies for the `wikipedia_query_module`:
+
+```bash
+pip install ".[wikipedia_query_module]"
 ```
 
 ## Configuration
