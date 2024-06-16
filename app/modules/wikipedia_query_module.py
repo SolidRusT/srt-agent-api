@@ -1,3 +1,6 @@
+import importlib.util
+import sys
+import json
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
@@ -8,14 +11,14 @@ from llama_cpp_agent.text_utils import RecursiveCharacterTextSplitter
 from ragatouille.utils import get_wikipedia_page
 from typing import List
 from pydantic import BaseModel, Field
-import json
+
 
 class WikipediaQueryModule:
     def __init__(self, config, logger):
         self.config = config
         self.logger = logger
         self.dependencies_available = self._check_dependencies()
-        
+
         if self.dependencies_available:
             self.rag = RAGColbertReranker(persistent=False)
             self.provider = self._initialize_provider()
@@ -74,6 +77,9 @@ class WikipediaQueryModule:
 
     def _initialize_output_settings(self):
         class QueryExtension(BaseModel):
+            """
+            Represents an extension of a query as additional queries.
+            """
             queries: List[str] = Field(default_factory=list, description="List of queries.")
 
         return LlmStructuredOutputSettings.from_pydantic_models(
@@ -109,8 +115,17 @@ class WikipediaQueryModule:
         )
         self.logger.debug(f"Query extension output: {output}")
 
-        # Load the query extension in JSON format and create an instance of the query extension model.
-        queries = self.output_settings.models[0].model_validate(json.loads(output))
+        if not output:
+            self.logger.error("No output received from the agent.")
+            return "Error: No output received from the agent."
+
+        try:
+            # Load the query extension in JSON format and create an instance of the query extension model.
+            queries = self.output_settings.models[0].model_validate(json.loads(output))
+        except json.JSONDecodeError as e:
+            self.logger.error(f"Error decoding JSON output from the agent: {e}")
+            return f"Error decoding JSON output from the agent: {e}"
+
         self.logger.debug(f"Extended queries: {queries.queries}")
 
         # Define the final prompt for the query with the retrieved information
@@ -140,7 +155,7 @@ if __name__ == "__main__":
     config = Config()
     logger = Logger()
     wikipedia_query_module = WikipediaQueryModule(config, logger)
-    page_url = "https://en.wikipedia.org/wiki/Synthetic_diamond"
+    page_url = "Synthetic_diamond"
     query = "What is a BARS apparatus?"
     result = wikipedia_query_module.process_wikipedia_query(page_url, query)
     print(f"Query Result: {result}")
