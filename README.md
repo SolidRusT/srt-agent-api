@@ -121,6 +121,15 @@ If the `wikipedia_query_module` dependencies are installed, you can query Wikipe
 Summary: {summary}
 ```
 
+### Product Comparison Module
+
+If the `product_comparison_module` dependencies are installed, you can compare products and get recommendations using the `compare:` command:
+
+```plaintext
+> compare: iPhone 13, Samsung Galaxy S22, Smartphones, a professional photographer
+Product Comparison Result: {result}
+```
+
 ## Dockerization
 
 You can build and run the application using Docker. For detailed instructions, see [DOCKER.md](DOCKER.md).
@@ -173,6 +182,14 @@ To query a Wikipedia page, use the wikipedia query endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=Synthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"
+```
+
+### API Endpoint for Product Comparison
+
+To compare products and get a recommendation, use the product comparison endpoint:
+
+```bash
+curl -X GET "http://127.0.0.1:8000/product-comparison?product1=iPhone%2013&product2=Samsung%20Galaxy%20S22&category=Smartphones&user_profile=a%20professional%20photographer"
 ```
 
 ## Logging

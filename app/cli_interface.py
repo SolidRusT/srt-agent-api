@@ -3,6 +3,7 @@ from app.modules.api_module import APIModule
 from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
+from app.modules.product_comparison_module import ProductComparisonModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
@@ -40,6 +41,13 @@ def main():
     except ImportError as e:
         wikipedia_query_module = None
         logger.info(f"Wikipedia Query module could not be initialized: {e}. Wikipedia Query functionality is disabled.")
+
+    try:
+        product_comparison_module = ProductComparisonModule(config, logger)
+    except ImportError as e:
+        product_comparison_module = None
+        logger.info(
+            f"Product Comparison module could not be initialized: {e}. Product Comparison functionality is disabled.")
 
     while True:
         user_input = input(">")
@@ -84,6 +92,18 @@ def main():
                     print("Please provide both the Wikipedia page URL and the query, separated by a comma.")
             else:
                 print("Wikipedia Query functionality is disabled due to import issues.")
+        elif user_input.startswith("compare:"):
+            if product_comparison_module:
+                params = user_input[len("compare:"):].strip().split(",")
+                if len(params) == 4:
+                    product1, product2, category, user_profile = params
+                    result = product_comparison_module.compare_and_recommend(product1.strip(), product2.strip(),
+                                                                             category.strip(), user_profile.strip())
+                    print(f"Product Comparison Result: {result}")
+                else:
+                    print("Invalid input format. Use: compare: product1, product2, category, user_profile")
+            else:
+                print("Product Comparison functionality is disabled due to import issues.")
         else:
             response = chat_module.chat(user_input)
             print(f"Agent: {response}")

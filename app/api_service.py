@@ -5,6 +5,7 @@ from app.modules.api_module import APIModule
 from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
+from app.modules.product_comparison_module import ProductComparisonModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 import uvicorn
@@ -52,6 +53,12 @@ try:
 except ImportError as e:
     wikipedia_query_module = None
     logger.info(f"Wikipedia Query module could not be initialized: {e}. Wikipedia Query functionality is disabled.")
+
+try:
+    product_comparison_module = ProductComparisonModule(config, logger)
+except ImportError as e:
+    product_comparison_module = None
+    logger.info(f"Product Comparison module could not be initialized: {e}. Product Comparison functionality is disabled.")
 
 class ChatRequest(BaseModel):
     message: str
@@ -132,6 +139,19 @@ def wikipedia_query(page_url: str, query: str):
     except Exception as e:
         logger.error(f"Error processing Wikipedia query for page: {page_url} and query: {query}, error: {e}")
         raise HTTPException(status_code=500, detail="Error processing Wikipedia query")
+
+@app.get("/product-comparison", summary="Compare Products and Recommend", tags=["Product Comparison Module"])
+def product_comparison(product1: str, product2: str, category: str, user_profile: str):
+    if not product_comparison_module:
+        raise HTTPException(status_code=501, detail="Product Comparison functionality is disabled.")
+    logger.debug(f"Processing product comparison for: {product1} vs {product2} in category {category} for user {user_profile}")
+    try:
+        result = product_comparison_module.compare_and_recommend(product1, product2, category, user_profile)
+        return {"result": result}
+    except Exception as e:
+        logger.error(f"Error processing product comparison: {e}")
+        raise HTTPException(status_code=500, detail="Error processing product comparison")
+
 
 if __name__ == "__main__":
     uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=True, app_dir=".")

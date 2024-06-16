@@ -65,6 +65,7 @@ wiki_summary_module = [
 wikipedia_query_module = [
     "chromadb"
 ]
+product_comparison_module = ["llama_cpp_agent"]
 
 [tool.setuptools.packages.find]
 where = ["app"]
