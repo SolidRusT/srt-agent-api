@@ -1,5 +1,3 @@
-import importlib.util
-import sys
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
@@ -32,7 +30,7 @@ class WikipediaQueryModule:
             self.output_settings = self._initialize_output_settings()
         else:
             self.logger.info("Wikipedia Query module dependencies are not installed. Disabling functionality.")
-    
+
     def _check_dependencies(self):
         required_modules = ["llama_cpp_agent", "ragatouille", "chromadb"]
         missing_modules = []
@@ -77,7 +75,7 @@ class WikipediaQueryModule:
     def _initialize_output_settings(self):
         class QueryExtension(BaseModel):
             queries: List[str] = Field(default_factory=list, description="List of queries.")
-        
+
         return LlmStructuredOutputSettings.from_pydantic_models(
             [QueryExtension], LlmStructuredOutputType.object_instance
         )
@@ -87,26 +85,33 @@ class WikipediaQueryModule:
             return "Wikipedia Query functionality is disabled due to missing dependencies."
 
         # Use the ragatouille helper function to get the content of a Wikipedia page.
+        self.logger.debug(f"Retrieving content for page: {page_url}")
         page_content = get_wikipedia_page(page_url)
-        
+
         if not page_content:
             self.logger.error(f"Failed to retrieve content for page: {page_url}")
             return "Failed to retrieve content for the specified Wikipedia page."
 
         # Split the text of the Wikipedia page into chunks for the vector database.
+        self.logger.debug(f"Splitting content into chunks.")
         splits = self.splitter.split_text(page_content)
+        self.logger.debug(f"Total chunks created: {len(splits)}")
 
         # Add the splits into the vector database
         for split in splits:
             self.rag.add_document(split)
+        self.logger.debug(f"Added chunks to the vector database.")
 
         # Perform the query extension with the agent.
+        self.logger.debug(f"Performing query extension.")
         output = self.agent.get_chat_response(
             f"Consider the following query: {query}", structured_output_settings=self.output_settings
         )
+        self.logger.debug(f"Query extension output: {output}")
 
         # Load the query extension in JSON format and create an instance of the query extension model.
         queries = self.output_settings.models[0].model_validate(json.loads(output))
+        self.logger.debug(f"Extended queries: {queries.queries}")
 
         # Define the final prompt for the query with the retrieved information
         prompt = "Consider the following context:\n==========Context===========\n"
@@ -122,12 +127,13 @@ class WikipediaQueryModule:
             for doc in documents:
                 if doc["content"] not in prompt:
                     prompt += doc["content"] + "\n\n"
-        
+
         prompt += "\n======================\nQuestion: " + query
 
         # Ask the agent the original query with the generated prompt that contains the retrieved information.
         result = self.agent.get_chat_response(prompt)
         return result
+
 
 # Example usage
 if __name__ == "__main__":
