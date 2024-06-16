@@ -43,6 +43,10 @@ cp config-example.yaml config.yaml
 To start the API service:
 
 ```bash
+export PERSONA='Default'       # Persona for the 'chat_module'.
+export PORT=8000               # TCP port for the API service
+export SERVER_NAME='127.0.0.1' # IP to use, or for all IPs: '0.0.0.0'
+
 python -m app.api_service
 ```
 
@@ -132,6 +136,14 @@ To get a summary of a Wikipedia page, use the wiki summary endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/wiki-summary/Python_(programming_language)"
+```
+
+### Web Search
+
+To get a summary of a Wikipedia page, use the wiki summary endpoint:
+
+```bash
+curl -X GET "http://127.0.0.1:8000/search?query=how%20to%20search%20the%20web"
 ```
 
 ## Logging

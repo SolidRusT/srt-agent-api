@@ -103,5 +103,17 @@ def wiki_summary(title: str):
         logger.error(f"Error fetching wiki summary for title: {title}, error: {e}")
         raise HTTPException(status_code=500, detail="Error fetching wiki summary")
 
+@app.get("/search", summary="Perform a Web Search", tags=["Search Module"])
+def search(query: str = Query(..., description="Query to search for")):
+    if not search_module:
+        raise HTTPException(status_code=501, detail="Search functionality is disabled.")
+    logger.debug(f"Performing search for query: {query}")
+    try:
+        results = search_module.search(query)
+        return {"results": results}
+    except Exception as e:
+        logger.error(f"Error performing search for query: {query}, error: {e}")
+        raise HTTPException(status_code=500, detail="Error performing search")
+
 if __name__ == "__main__":
     uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=True, app_dir=".")
