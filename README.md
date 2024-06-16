@@ -104,6 +104,15 @@ If the `wiki_summary_module` dependencies are installed, you can summarize Wikip
 Summary: {summary}
 ```
 
+### Wikipedia Query Module
+
+If the `wikipedia_query_module` dependencies are installed, you can query Wikipedia content using the `wikipedia_query:` command:
+
+```plaintext
+> wikipedia_query: Synthetic_diamond, What is a BARS apparatus?
+Summary: {summary}
+```
+
 ## API Endpoints
 
 ### Health Check
@@ -149,7 +158,7 @@ curl -X GET "http://127.0.0.1:8000/wiki-summary/Python_(programming_language)"
 ### Wikipedia Query
 
 ```bash
-curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FSynthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"
+curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=Synthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"
 ```
 
 ## Logging
