@@ -7,11 +7,11 @@ name = "srt-web-chat"
 version = "0.1.5"
 description = "A modular agentic api and cli application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
-requires-python = ">=3.11"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [
     {name = "Suparious", email = "suparious@solidrust.net"}
 ]
+requires-python = ">=3.11,<3.13"
 
 dependencies = [
     "srt-core>=0.1.15",
@@ -48,9 +48,6 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 
-[project.urls]
-Homepage = "https://github.com/SolidRusT/srt-agent-api"
-
 [project.optional-dependencies]
 vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
 search_module = [
@@ -76,3 +73,6 @@ where = ["app"]
 start-api = "app.api_service:main"
 run-cli = "app.cli_interface:main"
 run-tests = "app.test_runner:run_tests"
+
+[project.urls]
+Homepage = "https://github.com/SolidRusT/srt-agent-api"

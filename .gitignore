@@ -11,3 +11,4 @@ config.yaml
 *.whl
 *.gz
 *.egg*
+.idea/
