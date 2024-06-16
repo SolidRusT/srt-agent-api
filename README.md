@@ -1,5 +1,7 @@
 # srt-agent-api
 
+[![GitHub version](https://badge.fury.io/gh/solidrust%2Fsrt-agent-api.svg)](https://badge.fury.io/gh/solidrust%2Fsrt-agent-api)
+
 ## Overview
 
 `srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching and Wikipedia summaries.
