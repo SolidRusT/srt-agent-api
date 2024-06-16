@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "srt-web-chat"
 version = "0.1.5"
-description = "A modular web chat application integrating srt-core and llama-cpp-agent frameworks."
+description = "A modular agentic api and cli application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "SolidRusT Networks", email = "info@solidrust.net"}
+    {name = "Suparious", email = "suparious@solidrust.net"}
 ]
 
 dependencies = [

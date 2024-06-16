@@ -1,13 +1,13 @@
 # Project Roadmap
 
-This document outlines the future objectives and plans for the `srt-web-chat` project.
+This document outlines the future objectives and plans for the `srt-agent-api` project.
 
 ## Current Status
 
 The project currently supports the following functionalities:
 
 - Chat module with API and CLI interfaces.
-- API endpoints for fetching data, wiki summaries, and web searches.
+- API endpoints for fetching data, wiki summaries, Wikipedia queries, and web searches.
 - Configurable via `config.yaml`.
 - CI/CD pipeline set up for automated testing.
 
@@ -16,12 +16,15 @@ The project currently supports the following functionalities:
 ### New Module Ideas
 
 1. **Translation Module**
+
    - Implement a tool to translate text using an LLM provider.
 
 2. **Sentiment Analysis Module**
+
    - Create a tool to analyze the sentiment of text inputs.
 
 3. **Summarization Module**
+
    - Develop a module for text summarization, different from the wiki summary.
 
 4. **Entity Recognition Module**
@@ -30,9 +33,11 @@ The project currently supports the following functionalities:
 ### Reviewing Examples from `llama-cpp-agent` Repository
 
 1. **Incorporate More Tools**
+
    - Explore additional tools provided by the `llama-cpp-agent` and see how they can be integrated.
 
 2. **Refine Existing Modules**
+
    - Use examples to refine and enhance current modules, improving their functionality and performance.
 
 3. **New Functionality**
@@ -41,9 +46,11 @@ The project currently supports the following functionalities:
 ### Improve Documentation and Developer Experience
 
 1. **API Documentation**
+
    - Create detailed API documentation using tools like Swagger.
 
 2. **Example Use Cases**
+
    - Provide more example use cases and code snippets for developers.
 
 3. **Tutorials and Guides**
@@ -52,21 +59,29 @@ The project currently supports the following functionalities:
 ### Enhance Testing and CI/CD
 
 1. **Increase Test Coverage**
+
    - Write more unit and integration tests to cover all functionalities.
 
 2. **Automate Deployment**
+
    - Set up CI/CD pipelines to automate deployment to a cloud service.
 
 3. **Mocking External Services**
    - Ensure tests don't rely on external services by mocking them.
 
-### Build Frontend UI
+### Performance, Concurrency, and Accuracy
 
-1. **Web Interface**
-   - Start building a web interface using frameworks like React, Svelte, or HTMX.
+1. **Dockerization**
 
-2. **CLI Enhancements**
-   - Enhance the CLI to include more interactive features.
+   - Support running the API in Docker.
+   - Create Docker Compose files to run API modules individually for scaling and performance.
+
+2. **Distributed Architecture**
+
+   - Enable modules to run on different machines or ports for better control over dependencies and scaling.
+
+3. **Prometheus Integration**
+   - Utilize `prometheus-node-exporter` for additional monitoring of the Ubuntu Server 24.04 machines.
 
 ## Prioritization and Phases
 
@@ -85,16 +100,23 @@ The project currently supports the following functionalities:
   - Sentiment Analysis Module.
 - **Enhance Testing and CI/CD**
   - Increase test coverage.
+- **Dockerization**
+  - Implement Docker support and create Docker Compose files.
 
 ### Phase 3: Long-term Goals
 
-- **Build Frontend UI**
-  - Web Interface.
-  - CLI Enhancements.
+- **Distributed Architecture**
+  - Enable distributed architecture for better performance and scalability.
 - **New Module Ideas**
   - Summarization Module.
   - Entity Recognition Module.
+- **Prometheus Integration**
+  - Integrate Prometheus for enhanced monitoring and performance tracking.
 
 ## Conclusion
 
 This roadmap will be regularly updated to reflect the progress and changes in priorities. Contributions and suggestions are welcome!
+
+## References
+
+- [https://github.com/carlosperate/awesome-pyproject](https://github.com/carlosperate/awesome-pyproject)
