@@ -1,11 +1,10 @@
 # srt-agent-api
 
-![GitHub Release](https://img.shields.io/github/v/release/SolidRusT/srt-agent-api) ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FSolidRusT%2Fsrt-agent-api%2Fmain%2Fpyproject.toml)
- ![GitHub License](https://img.shields.io/github/license/SolidRusT/srt-agent-api)
+![GitHub Release](https://img.shields.io/github/v/release/SolidRusT/srt-agent-api) ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FSolidRusT%2Fsrt-agent-api%2Fmain%2Fpyproject.toml) ![GitHub License](https://img.shields.io/github/license/SolidRusT/srt-agent-api)
 
 ## Overview
 
-`srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching and Wikipedia summaries.
+`srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching, Wikipedia summaries, and more.
 
 ## Installation
 
@@ -150,7 +149,7 @@ curl -X GET "http://127.0.0.1:8000/fetch-list?url=https://jsonplaceholder.typico
 
 ### Web Search
 
-To get a summary of a Wikipedia page, use the wiki summary endpoint:
+To perform a web search, use the search endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/search?query=how%20to%20search%20the%20web"
@@ -165,6 +164,8 @@ curl -X GET "http://127.0.0.1:8000/wiki-summary/Python_(programming_language)"
 ```
 
 ### Wikipedia Query
+
+To query a Wikipedia page, use the Wikipedia query endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=Synthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"

@@ -11,14 +11,13 @@ To run the tests locally, follow these steps:
 1. Ensure all dependencies are installed:
 
     ```bash
+    python -m venv .venv
+    source .venv/bin/activate   # Windows uses the 'Scripts' directory.
+    pip install --upgrade pip
     pip install ".[vllm_provider,search_module,wiki_summary_module,wikipedia_query_module]"
     ```
 
-2. Copy the example configuration file to `config.yaml`:
-
-    ```bash
-    cp config-example.yaml config.yaml
-    ```
+2. Configure a valid `config.yaml`:
 
 3. Run the tests using the provided script:
 

@@ -6,6 +6,7 @@ from app.modules.wikipedia_query_module import WikipediaQueryModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
+
 def main():
     config = Config()
     logger = Logger()
@@ -86,6 +87,7 @@ def main():
         else:
             response = chat_module.chat(user_input)
             print(f"Agent: {response}")
+
 
 if __name__ == "__main__":
     main()
