@@ -4,7 +4,7 @@
 
 ## Overview
 
-`srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching, Wikipedia summaries, and more.
+`srt-agent-api` is a modular application that provides chat functionality using the `llama-cpp-agent` framework and various other features like API fetching and Wikipedia summaries.
 
 ## Installation
 
@@ -121,6 +121,10 @@ If the `wikipedia_query_module` dependencies are installed, you can query Wikipe
 Summary: {summary}
 ```
 
+## Dockerization
+
+You can build and run the application using Docker. For detailed instructions, see [DOCKER.md](DOCKER.md).
+
 ## API Endpoints
 
 ### Health Check
@@ -149,7 +153,7 @@ curl -X GET "http://127.0.0.1:8000/fetch-list?url=https://jsonplaceholder.typico
 
 ### Web Search
 
-To perform a web search, use the search endpoint:
+To get a summary of a Web Search, use the web search endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/search?query=how%20to%20search%20the%20web"
@@ -165,7 +169,7 @@ curl -X GET "http://127.0.0.1:8000/wiki-summary/Python_(programming_language)"
 
 ### Wikipedia Query
 
-To query a Wikipedia page, use the Wikipedia query endpoint:
+To query a Wikipedia page, use the wikipedia query endpoint:
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/wikipedia-query?page_url=Synthetic_diamond&query=What%20is%20a%20BARS%20apparatus%3F"
