@@ -88,6 +88,10 @@ class WikipediaQueryModule:
 
         # Use the ragatouille helper function to get the content of a Wikipedia page.
         page_content = get_wikipedia_page(page_url)
+        
+        if not page_content:
+            self.logger.error(f"Failed to retrieve content for page: {page_url}")
+            return "Failed to retrieve content for the specified Wikipedia page."
 
         # Split the text of the Wikipedia page into chunks for the vector database.
         splits = self.splitter.split_text(page_content)
