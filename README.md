@@ -82,6 +82,27 @@ The chat module allows you to interact with the assistant:
 Agent: Hello, Jeff! How can I assist you today?
 ```
 
+### Function Calling in Chat Module
+
+The chat module now supports function calling. You can ask the assistant to perform various tasks such as fetching data, providing Wikipedia summaries, querying Wikipedia, performing calculations, and getting the current datetime.
+
+```plaintext
+> What is the current date and time?
+Agent: Current datetime is 2023-11-24 15:42:35
+
+> fetch: https://jsonplaceholder.typicode.com/posts/1
+Fetched Data: {data}
+
+> wiki: Synthetic diamond
+Summary: {summary}
+
+> wikipedia_query: Synthetic_diamond, What is a BARS apparatus?
+Summary: {summary}
+
+> What is 42 * 42?
+Agent: 1764
+```
+
 ### API Module
 
 You can fetch data from an API using the `fetch:` command:

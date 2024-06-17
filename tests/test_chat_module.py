@@ -22,5 +22,12 @@ class TestChatModule(unittest.TestCase):
         response = self.chat_module.chat("Hi")
         self.assertIn("Error", response)
 
+    @patch('app.modules.chat_module.FunctionCallingAgent')
+    def test_chat_function_calling(self, mock_agent):
+        mock_agent_instance = mock_agent.return_value
+        mock_agent_instance.generate_response.return_value = "Current datetime is 2023-11-24 15:42:35"
+        response = self.chat_module.chat("What is the current date and time?")
+        self.assertEqual(response, "Current datetime is 2023-11-24 15:42:35")
+
 if __name__ == '__main__':
     unittest.main()
