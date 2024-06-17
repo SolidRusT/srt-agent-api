@@ -1,5 +1,5 @@
 from llama_cpp_agent.tools import WebSearchTool
-from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
+from llama_cpp_agent import MessagesFormatterType
 from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings
 from app.modules.base_module import BaseModule
 
@@ -10,7 +10,7 @@ class SearchModule(BaseModule):
         super().__init__(config, logger, required_modules)
 
         if self.dependencies_available:
-            self.provider = self._initialize_provider()
+            self.provider = self._initialize_provider(config.default_llm_settings)
             self.agent = self._initialize_agent("You are a web search assistant.")
             self.search_tool = WebSearchTool(
                 self.provider,

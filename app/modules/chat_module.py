@@ -2,7 +2,7 @@ import datetime
 from typing import Union, Optional
 
 from llama_cpp_agent import FunctionCallingAgent, LlamaCppFunctionTool
-from llama_cpp_agent import MessagesFormatterType
+from llama_cpp_agent.messages_formatter import MessagesFormatterType
 from app.modules.base_module import BaseModule
 from app.modules.api_module import APIModule
 from app.modules.wiki_summary_module import WikiSummaryModule
@@ -38,11 +38,31 @@ class ChatModule(BaseModule):
         self.logger.info(f"Assistant: {message.strip()}")
 
     def _get_current_datetime(self, output_format: Optional[str] = None):
+        """
+        Get the current date and time in the given format.
+
+        Args:
+            output_format (str, optional): The format for the output datetime string.
+
+        Returns:
+            str: The formatted current datetime string.
+        """
         if output_format is None:
             output_format = '%Y-%m-%d %H:%M:%S'
         return datetime.datetime.now().strftime(output_format)
 
     def _perform_calculations(self, number_one: Union[int, float], operation: str, number_two: Union[int, float]):
+        """
+        Perform a calculation with two numbers.
+
+        Args:
+            number_one (Union[int, float]): The first number.
+            operation (str): The operation to perform ('add', 'subtract', 'multiply', 'divide').
+            number_two (Union[int, float]): The second number.
+
+        Returns:
+            Union[int, float]: The result of the calculation.
+        """
         if operation == "add":
             return number_one + number_two
         elif operation == "subtract":
@@ -55,18 +75,55 @@ class ChatModule(BaseModule):
             raise ValueError("Unknown operation.")
 
     def _fetch_data(self, url: str):
+        """
+        Fetch data from a given URL.
+
+        Args:
+            url (str): The URL to fetch data from.
+
+        Returns:
+            dict: The fetched data.
+        """
         api_module = APIModule(self.config, self.logger)
         return api_module.fetch_data(url)
 
     def _wiki_summary(self, page_title: str):
+        """
+        Get a summary of a Wikipedia page.
+
+        Args:
+            page_title (str): The title of the Wikipedia page.
+
+        Returns:
+            str: The summary of the Wikipedia page.
+        """
         wiki_summary_module = WikiSummaryModule(self.config, self.logger)
         return wiki_summary_module.summarize_wikipedia_page(page_title)
 
     def _wikipedia_query(self, page_url: str, query: str):
+        """
+        Query a Wikipedia page.
+
+        Args:
+            page_url (str): The URL of the Wikipedia page.
+            query (str): The query to perform on the page.
+
+        Returns:
+            str: The result of the query.
+        """
         wikipedia_query_module = WikipediaQueryModule(self.config, self.logger)
         return wikipedia_query_module.process_wikipedia_query(page_url, query)
 
     def _reflective_response(self, input_message: str):
+        """
+        Get a reflective response for a given input message.
+
+        Args:
+            input_message (str): The input message to reflect upon.
+
+        Returns:
+            str: The reflective response.
+        """
         agentic_reflection_module = AgenticReflectionModule(self.config, self.logger)
         return agentic_reflection_module.get_reflective_response(input_message)
 
