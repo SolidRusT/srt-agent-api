@@ -22,6 +22,11 @@ llms:
     agent_provider: 'vllm_server'
     server: 'Erebus'
     max_tokens: 8192
+  groq:
+    agent_provider: groq
+    url: "https://api.groq.com/openai/v1"
+    model: "mixtral-8x7b-32768"
+    huggingface: "mistralai/Mixtral-8x7B-Instruct-v0.1"
 personas:
   Default:
     name: "Default"

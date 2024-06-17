@@ -1,98 +1,28 @@
-import importlib.util
-import sys
-from srt_core.config import Config
-from srt_core.utils.logger import Logger
+from llama_cpp_agent.tools import WebSearchTool
 from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
 from llama_cpp_agent.llm_output_settings import LlmStructuredOutputSettings
-from llama_cpp_agent.prompt_templates import web_search_system_prompt
-from llama_cpp_agent.providers import VLLMServerProvider, LlamaCppServerProvider, TGIServerProvider
-from llama_cpp_agent.tools import WebSearchTool
+from app.modules.base_module import BaseModule
 
-class SearchModule:
+
+class SearchModule(BaseModule):
     def __init__(self, config, logger):
-        self.config = config
-        self.logger = logger
-        self.dependencies_available = self._check_dependencies()
-        
+        required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
+        super().__init__(config, logger, required_modules)
+
         if self.dependencies_available:
             self.provider = self._initialize_provider()
-            self.agent = self._initialize_agent()
-            self.search_tool = self._initialize_search_tool()
-            self.settings = self.provider.get_provider_default_settings()
-            self._configure_settings()
-            try:
-                self.output_settings = LlmStructuredOutputSettings.from_functions(
-                    [self.search_tool.get_tool(), self.write_message_to_user]
-                )
-            except AssertionError as e:
-                self.logger.error(f"Error creating structured output settings: {e}")
-                raise
-        else:
-            self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
-
-    def _check_dependencies(self):
-        self.logger.info(f"Python executable: {sys.executable}")
-        self.logger.info(f"sys.path: {sys.path}")
-        required_modules = ["llama_cpp_agent", "readability", "trafilatura"]
-        missing_modules = []
-        for module in required_modules:
-            try:
-                __import__(module)
-            except ImportError:
-                self.logger.warning(f"Module {module} is not installed.")
-                missing_modules.append(module)
-        if missing_modules:
-            self.logger.error(f"Missing required modules: {', '.join(missing_modules)}")
-            return False
-        return True
-
-    def _initialize_provider(self):
-        llm_settings = self.config.default_llm_settings
-        self.logger.info(f"Initializing provider with settings: {llm_settings}")
-        if llm_settings["agent_provider"] == "vllm_server":
-            return VLLMServerProvider(
-                llm_settings["url"],
-                llm_settings["huggingface"],
-                llm_settings["huggingface"],
-                self.config.openai_compatible_api_key,
-            )
-        elif llm_settings["agent_provider"] == "llama_cpp_server":
-            return LlamaCppServerProvider(llm_settings["url"])
-        elif llm_settings["agent_provider"] == "tgi_server":
-            return TGIServerProvider(server_address=llm_settings["url"])
-        else:
-            self.logger.error(f"Unsupported provider: {llm_settings['agent_provider']}")
-            raise ValueError(f"Unsupported provider: {llm_settings['agent_provider']}")
-
-    def _initialize_agent(self):
-        self.logger.info("Initializing LlamaCppAgent.")
-        return LlamaCppAgent(
-            self.provider,
-            debug_output=True,
-            system_prompt=web_search_system_prompt,
-            predefined_messages_formatter_type=MessagesFormatterType.MISTRAL,
-            add_tools_and_structures_documentation_to_system_prompt=True,
-        )
-
-    def _initialize_search_tool(self):
-        try:
-            from readability import Document
-            self.logger.info("Successfully imported Document from readability.")
-        except ImportError as e:
-            self.logger.error(f"Cannot import Document from readability: {e}")
-            return None
-
-        try:
-            from llama_cpp_agent.tools import WebSearchTool
-            self.logger.info("Successfully imported WebSearchTool from llama_cpp_agent.tools.")
-            return WebSearchTool(
+            self.agent = self._initialize_agent("You are a web search assistant.")
+            self.search_tool = WebSearchTool(
                 self.provider,
                 MessagesFormatterType.MISTRAL,
                 max_tokens_search_results=20000
             )
-        except ImportError as e:
-            self.logger.error(f"Cannot import WebSearchTool: {e}")
-            return None
+            self.settings = self.provider.get_provider_default_settings()
+            self._configure_settings()
+            self.output_settings = LlmStructuredOutputSettings.from_functions(
+                [self.search_tool.get_tool(), self.write_message_to_user])
+        else:
+            self.logger.info("Search tool dependencies are not installed. Disabling search functionality.")
 
     def _configure_settings(self):
         self.logger.info("Configuring settings.")
@@ -101,37 +31,12 @@ class SearchModule:
 
     @staticmethod
     def write_message_to_user():
-        """
-        This function simulates writing a message to the user.
-        """
         return "Please write the message to the user."
 
     def search(self, query):
         if not self.dependencies_available or not self.search_tool or not self.output_settings:
             return "Search functionality is disabled due to missing dependencies."
 
-        result = self.agent.get_chat_response(query,
-                                              llm_sampling_settings=self.settings,
+        result = self.agent.get_chat_response(query, llm_sampling_settings=self.settings,
                                               structured_output_settings=self.output_settings)
-        while True:
-            if result[0]["function"] == "write_message_to_user":
-                break
-            else:
-                result = self.agent.get_chat_response(result[0]["return_value"], role="tool",
-                                                      structured_output_settings=self.output_settings,
-                                                      llm_sampling_settings=self.settings)
-        result = self.agent.get_chat_response(result[0]["return_value"], role="tool",
-                                              llm_sampling_settings=self.settings)
         return result
-
-# Example usage
-if __name__ == "__main__":
-    config = Config()
-    logger = Logger()
-    search_module = SearchModule(config, logger)
-    while True:
-        user_input = input(">")
-        if user_input == "exit":
-            break
-        results = search_module.search(user_input)
-        print(f"Search Results: {results}")

@@ -1,38 +1,38 @@
-from llama_cpp_agent import LlamaCppAgent, MessagesFormatterType
-from llama_cpp_agent.providers import VLLMServerProvider
+from app.modules.base_module import BaseModule
 
-class ChatModule:
+class ChatModule(BaseModule):
     def __init__(self, config, logger):
-        self.config = config
-        self.provider = self._initialize_provider()
-        self.agent = self._initialize_agent()
-        self.settings = self.provider.get_provider_default_settings()
-        self._configure_settings()
+        required_modules = ["llama_cpp_agent"]
+        super().__init__(config, logger, required_modules)
 
-    def _initialize_provider(self):
-        llm_settings = self.config.default_llm_settings
-        return VLLMServerProvider(
-            llm_settings["url"],
-            llm_settings["huggingface"],
-            llm_settings["huggingface"],
-            self.config.openai_compatible_api_key
-        )
+        if self.dependencies_available:
+            self.provider = self._initialize_provider()
+            self.agent = self._initialize_agent("You are a helpful assistant.")
+        else:
+            self.logger.info("Chat module dependencies are not installed. Disabling functionality.")
 
-    def _initialize_agent(self):
-        default_agent_name = self.config.persona_full_name
-        default_system_prompt = self.config.persona_system_message
-        default_persona = self.config.persona_prompt_message
-        default_prompt = default_system_prompt + "\nMy name is " + default_agent_name + ".\n" + default_persona + "\n"
-        return LlamaCppAgent(
-            self.provider,
-            system_prompt=default_prompt,
-            predefined_messages_formatter_type=MessagesFormatterType.MISTRAL,
-        )
+    def chat(self, message):
+        if not self.dependencies_available:
+            return "Chat functionality is disabled due to missing dependencies."
+        try:
+            response = self.agent.get_chat_response(message)
+            return response
+        except Exception as e:
+            self.logger.error(f"Error processing chat request: {e}")
+            return f"Error: {e}"
 
-    def _configure_settings(self):
-        self.settings.max_tokens = 512
-        self.settings.temperature = 0.65
+# Example usage
+if __name__ == "__main__":
+    from srt_core.config import Config
+    from srt_core.utils.logger import Logger
 
-    def chat(self, prompt):
-        response = self.agent.get_chat_response(prompt, llm_sampling_settings=self.settings)
-        return response.strip()
+    config = Config()
+    logger = Logger()
+    chat_module = ChatModule(config, logger)
+
+    while True:
+        user_input = input(">")
+        if user_input == "exit":
+            break
+        response = chat_module.chat(user_input)
+        print(f"Agent: {response}")

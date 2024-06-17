@@ -1,51 +1,18 @@
-from llama_cpp_agent import AgentChainElement, AgentChain, LlamaCppAgent, MessagesFormatterType
-from llama_cpp_agent.providers import LlamaCppServerProvider
-from srt_core.config import Config
-from srt_core.utils.logger import Logger
+from llama_cpp_agent import AgentChainElement, AgentChain
+from app.modules.base_module import BaseModule
 
 
-class ProductComparisonModule:
+class ProductComparisonModule(BaseModule):
     def __init__(self, config, logger):
-        self.config = config
-        self.logger = logger
-        self.dependencies_available = self._check_dependencies()
+        required_modules = ["llama_cpp_agent"]
+        super().__init__(config, logger, required_modules)
 
         if self.dependencies_available:
             self.provider = self._initialize_provider()
-            self.agent = self._initialize_agent()
+            self.agent = self._initialize_agent("You are a product comparison expert.")
             self.chain = self._initialize_chain()
         else:
             self.logger.info("Product Comparison module dependencies are not installed. Disabling functionality.")
-
-    def _check_dependencies(self):
-        required_modules = ["llama_cpp_agent"]
-        missing_modules = []
-        for module in required_modules:
-            try:
-                __import__(module)
-            except ImportError:
-                self.logger.warning(f"Module {module} is not installed.")
-                missing_modules.append(module)
-        if missing_modules:
-            self.logger.error(f"Missing required modules: {', '.join(missing_modules)}")
-            return False
-        return True
-
-    def _initialize_provider(self):
-        llm_settings = self.config.default_llm_settings
-        if llm_settings["agent_provider"] == "llama_cpp_server":
-            return LlamaCppServerProvider(llm_settings["url"])
-        else:
-            self.logger.error(f"Unsupported provider: {llm_settings['agent_provider']}")
-            raise ValueError(f"Unsupported provider: {llm_settings['agent_provider']}")
-
-    def _initialize_agent(self):
-        return LlamaCppAgent(
-            self.provider,
-            debug_output=True,
-            system_prompt="",
-            predefined_messages_formatter_type=MessagesFormatterType.MISTRAL
-        )
 
     def _initialize_chain(self):
         product_comparison = AgentChainElement(
@@ -72,13 +39,3 @@ class ProductComparisonModule:
         }
         result = self.chain.run_chain(additional_fields)
         return result
-
-
-# Example usage
-if __name__ == "__main__":
-    config = Config()
-    logger = Logger()
-    product_module = ProductComparisonModule(config, logger)
-    result = product_module.compare_and_recommend("iPhone 13", "Samsung Galaxy S22", "Smartphones",
-                                                  "a professional photographer")
-    print(result)
