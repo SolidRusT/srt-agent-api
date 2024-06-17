@@ -130,6 +130,15 @@ If the `product_comparison_module` dependencies are installed, you can compare p
 Product Comparison Result: {result}
 ```
 
+### Agentic Reflection Module
+
+If the `agentic_reflection_module` dependencies are installed, you can get reflective responses using the `reflect:` command:
+
+```plaintext
+> reflect: Write a summary about the independence war of America against England.
+Reflective Response: {response}
+```
+
 ## Dockerization
 
 You can build and run the application using Docker. For detailed instructions, see [DOCKER.md](DOCKER.md).
@@ -190,6 +199,14 @@ To compare products and get a recommendation, use the product comparison endpoin
 
 ```bash
 curl -X GET "http://127.0.0.1:8000/product-comparison?product1=iPhone%2013&product2=Samsung%20Galaxy%20S22&category=Smartphones&user_profile=a%20professional%20photographer"
+```
+
+### Get Reflective Response
+
+To get a reflective response, use the following endpoint:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/reflective-response" -d "input_message=Write a summary about the independence war of America against England."
 ```
 
 ## Logging

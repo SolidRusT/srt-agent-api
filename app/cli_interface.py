@@ -4,6 +4,7 @@ from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
 from app.modules.product_comparison_module import ProductComparisonModule
+from app.modules.agentic_reflection_module import AgenticReflectionModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
@@ -48,6 +49,12 @@ def main():
         product_comparison_module = None
         logger.info(
             f"Product Comparison module could not be initialized: {e}. Product Comparison functionality is disabled.")
+
+    try:
+        agentic_reflection_module = AgenticReflectionModule(config, logger)
+    except ImportError as e:
+        agentic_reflection_module = None
+        logger.info(f"Agentic Reflection module could not be initialized: {e}. Reflection functionality is disabled.")
 
     while True:
         user_input = input(">")
@@ -104,6 +111,13 @@ def main():
                     print("Invalid input format. Use: compare: product1, product2, category, user_profile")
             else:
                 print("Product Comparison functionality is disabled due to import issues.")
+        elif user_input.startswith("reflect:"):
+            if agentic_reflection_module:
+                input_message = user_input[len("reflect:"):].strip()
+                response = agentic_reflection_module.get_reflective_response(input_message)
+                print(f"Reflective Response: {response}")
+            else:
+                print("Reflection functionality is disabled due to missing dependencies.")
         else:
             response = chat_module.chat(user_input)
             print(f"Agent: {response}")

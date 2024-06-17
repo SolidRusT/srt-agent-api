@@ -4,7 +4,7 @@ from llama_cpp_agent.providers import (
     VLLMServerProvider,
     TGIServerProvider,
     LlamaCppPythonProvider,
-    GroqProvider
+    #GroqProvider
 )
 from llama_cpp import Llama
 
@@ -53,13 +53,13 @@ class BaseModule:
                 n_ctx=llm_settings["max_tokens"],
             )
             return LlamaCppPythonProvider(llama_model)
-        elif provider_type == "groq":
-            return GroqProvider(
-                base_url=llm_settings["url"],
-                model=llm_settings["model"],
-                huggingface_model=llm_settings["huggingface"],
-                api_key=llm_settings["api_key"]
-            )
+        #elif provider_type == "groq":
+        #    return GroqProvider(
+        #        base_url=llm_settings["url"],
+        #        model=llm_settings["model"],
+        #        huggingface_model=llm_settings["huggingface"],
+        #        api_key=llm_settings["api_key"]
+        #    )
         elif provider_type == "llama_cpp_python_server":
             return LlamaCppServerProvider(llm_settings["url"], llama_cpp_python_server=True)
         else:

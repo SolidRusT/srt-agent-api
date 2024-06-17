@@ -6,6 +6,7 @@ from app.modules.search_module import SearchModule
 from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
 from app.modules.product_comparison_module import ProductComparisonModule
+from app.modules.agentic_reflection_module import AgenticReflectionModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 import uvicorn
@@ -59,6 +60,13 @@ try:
 except ImportError as e:
     product_comparison_module = None
     logger.info(f"Product Comparison module could not be initialized: {e}. Product Comparison functionality is disabled.")
+
+try:
+    agentic_reflection_module = AgenticReflectionModule(config, logger)
+except ImportError as e:
+    agentic_reflection_module = None
+    logger.info(f"Agentic Reflection module could not be initialized: {e}. Reflection functionality is disabled.")
+
 
 class ChatRequest(BaseModel):
     message: str
@@ -151,6 +159,18 @@ def product_comparison(product1: str, product2: str, category: str, user_profile
     except Exception as e:
         logger.error(f"Error processing product comparison: {e}")
         raise HTTPException(status_code=500, detail="Error processing product comparison")
+
+@app.post("/reflective-response", summary="Get Reflective Response", tags=["Agentic Reflection Module"])
+def reflective_response(input_message: str):
+    if not agentic_reflection_module:
+        raise HTTPException(status_code=501, detail="Reflection functionality is disabled.")
+    logger.debug(f"Processing reflective response for message: {input_message}")
+    try:
+        response = agentic_reflection_module.get_reflective_response(input_message)
+        return {"response": response}
+    except Exception as e:
+        logger.error(f"Error processing reflective response for message: {input_message}, error: {e}")
+        raise HTTPException(status_code=500, detail="Error processing reflective response")
 
 
 if __name__ == "__main__":
