@@ -3,8 +3,8 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "srt-web-chat"
-version = "0.1.5"
+name = "srt-agent-api"
+version = "0.2.0"
 description = "A modular agentic api and cli application integrating srt-core and llama-cpp-agent frameworks."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -49,6 +49,23 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
+
+all = [
+    "openai",
+    "transformers",
+    "sentencepiece",
+    "protobuf",
+    "pypdf",
+    "trafilatura",
+    "readability-lxml",
+    "duckduckgo_search",
+    "googlesearch-python",
+    "pydantic",
+    "ragatouille",
+    "typing-extensions",
+    "chromadb"
+]
+
 vllm_provider = ["openai", "transformers", "sentencepiece", "protobuf"]
 search_module = [
     "pypdf", 
