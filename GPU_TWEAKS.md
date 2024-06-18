@@ -9,6 +9,14 @@ Grab a torch wheel that closely matches your ROCm version and python version.
 For example, with ROCm version 6.1 and Python 3.12:
 
 ```bash
-wget https://download.pytorch.org/whl/rocm6.0/torch-2.3.1%2Brocm6.0-cp312-cp312-linux_x86_64.whl#sha256=7d0aac31a5d76a6f737238725baecf35a6924f333f60a075ef5856c9e3212045
-pip install torch-2.3.1+rocm6.0-cp312-cp312-linux_x86_64.whl
+pip install wheel setuptools packaging
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.0
+pip install -U git+https://github.com/ROCm/flash-attention@flash_attention_for_rocm
+```
+
+Check if your AMD ROCm CUDA is available in PyTorch:
+
+```bash
+python -c 'import torch' 2> /dev/null && echo 'Success' || echo 'Failure'
+python -c 'import torch; print(torch.cuda.is_available())'
 ```
