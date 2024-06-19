@@ -15,6 +15,7 @@ class ChatModule(BaseModule):
         if self.dependencies_available:
             self.provider = self._initialize_provider(config.default_llm_settings)
             self.function_calling_agent = self._initialize_function_calling_agent()
+            #TODO: debug toggle: self.function_calling_agent.structured_output_settings.output_raw_json_string = True
 
     def _initialize_function_calling_agent(self):
         tools = [
@@ -31,7 +32,7 @@ class ChatModule(BaseModule):
             send_message_to_user_callback=self._send_message_to_user_callback,
             allow_parallel_function_calling=True,
             debug_output=False,
-            messages_formatter_type=MessagesFormatterType.CHATML
+            messages_formatter_type=MessagesFormatterType.MISTRAL
         )
 
     def _send_message_to_user_callback(self, message: str):
@@ -131,6 +132,7 @@ class ChatModule(BaseModule):
         settings = self.provider.get_provider_default_settings()
         settings.stream = False
         settings.temperature = 0.65
+        settings.max_tokens = 2048
 
         return self.function_calling_agent.generate_response(user_input, llm_sampling_settings=settings)
 

@@ -11,6 +11,7 @@ For example, with ROCm version 6.1 and Python 3.12:
 ```bash
 pip install wheel setuptools packaging
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.0
+# Optional (takes awhile to build)
 pip install -U git+https://github.com/ROCm/flash-attention@flash_attention_for_rocm
 ```
 

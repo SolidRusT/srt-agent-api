@@ -27,7 +27,7 @@ class AgenticReflectionModule(BaseModule):
                 self.provider,
                 debug_output=True,
                 system_prompt="You are a misinformed AI agent.",
-                predefined_messages_formatter_type=MessagesFormatterType.CHATML,
+                predefined_messages_formatter_type=MessagesFormatterType.MISTRAL,
                 chat_history=self.chat_history
             )
 
@@ -35,7 +35,7 @@ class AgenticReflectionModule(BaseModule):
                 self.provider,
                 system_prompt="Your task is to analyze, provide feedback and critique on an AI agent's latest response to a user in an ongoing conversation. You then decide if the latest response is approved or rejected.",
                 debug_output=True,
-                predefined_messages_formatter_type=MessagesFormatterType.CHATML
+                predefined_messages_formatter_type=MessagesFormatterType.MISTRAL
             )
 
     def get_reflective_response(self, input_message: str):

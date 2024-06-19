@@ -9,7 +9,7 @@ class WikiSummaryModule(BaseModule):
         super().__init__(config, logger, required_modules)
 
         if self.dependencies_available:
-            self.provider = self._initialize_provider()
+            self.provider = self._initialize_provider(config.default_llm_settings)
             self.agent = self._initialize_agent("You are an advanced AI assistant, trained by OpenAI.")
             self.splitter = RecursiveCharacterTextSplitter(
                 separators=["\n\n", "\n", " ", ""],

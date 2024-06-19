@@ -31,6 +31,9 @@ class SearchModule(BaseModule):
 
     @staticmethod
     def write_message_to_user():
+        """
+        Write message back to the user.
+        """
         return "Please write the message to the user."
 
     def search(self, query):

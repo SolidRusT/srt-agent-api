@@ -174,4 +174,4 @@ def reflective_response(input_message: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=True, app_dir=".")
+    uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=False, app_dir="app/")
