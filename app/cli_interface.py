@@ -58,6 +58,7 @@ def main():
 
     while True:
         user_input = input(">")
+
         if user_input == "exit":
             break
         elif user_input.startswith("fetch:"):
@@ -119,7 +120,8 @@ def main():
             else:
                 print("Reflection functionality is disabled due to missing dependencies.")
         else:
-            response = chat_module.chat(user_input)
+            # TODO: try to make this more universal
+            response = chat_module.chat(f"<user_message>{user_input}</user_message>")
             print(f"Agent: {response}")
 
 

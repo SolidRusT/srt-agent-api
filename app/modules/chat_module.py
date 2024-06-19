@@ -15,8 +15,9 @@ class ChatModule(BaseModule):
         if self.dependencies_available:
             self.provider = self._initialize_provider(config.default_llm_settings)
             self.function_calling_agent = self._initialize_function_calling_agent()
-            #TODO: debug toggle: self.function_calling_agent.structured_output_settings.output_raw_json_string = True
-
+            # TODO: add debug toggle
+            #self.function_calling_agent.structured_output_settings.output_raw_json_string = True
+            self.function_calling_agent.structured_output_settings.add_thoughts_and_reasoning_field = True
     def _initialize_function_calling_agent(self):
         tools = [
             LlamaCppFunctionTool(self._get_current_datetime),
@@ -31,7 +32,7 @@ class ChatModule(BaseModule):
             llama_cpp_function_tools=tools,
             send_message_to_user_callback=self._send_message_to_user_callback,
             allow_parallel_function_calling=True,
-            debug_output=False,
+            debug_output=True,
             messages_formatter_type=MessagesFormatterType.MISTRAL
         )
 
