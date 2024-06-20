@@ -13,8 +13,8 @@ To run the tests locally, follow these steps:
     ```bash
     python -m venv .venv
     source .venv/bin/activate   # Windows uses the 'Scripts' directory.
-    pip install --upgrade pip
-    pip install ".[vllm_provider,search_module,wiki_summary_module,wikipedia_query_module,product_comparison_module]"
+    python -m pip install -U pip
+    pip install -U ".[all]"
     ```
 
 2. Configure a valid `config.yaml`:

@@ -14,9 +14,7 @@ The project currently supports the following functionalities:
 
 ## Future Objectives
 
-### New
-
- Module Ideas
+### New Module Ideas
 
 1. **Translation Module**
    - Implement a tool to translate text using an LLM provider.

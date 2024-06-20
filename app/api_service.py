@@ -14,7 +14,7 @@ import uvicorn
 app = FastAPI(
     title="SRT Agent API",
     description="A modular web chat application integrating srt-core and llama-cpp-agent frameworks.",
-    version="0.1.5",
+    version="0.2.1",
     contact={
         "name": "SolidRusT Networks",
         "url": "https://github.com/SolidRusT/srt-agent-api",
@@ -77,7 +77,7 @@ class ChatResponse(BaseModel):
 @app.get("/", summary="Health Check", tags=["Health"])
 def health_check():
     logger.debug("Health check endpoint called")
-    return {"message": "Welcome to the srt-web-chat API"}
+    return {"message": "Welcome to the SRT Agent API"}
 
 @app.post("/chat", response_model=ChatResponse, summary="Chat with the Agent", tags=["Chat Module"])
 async def chat(request: ChatRequest):
