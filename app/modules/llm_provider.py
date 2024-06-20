@@ -1,6 +1,5 @@
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
-from llama_cpp import Llama
 import importlib
 
 class LLMProvider:
@@ -60,6 +59,7 @@ class LLMProvider:
             return TGIServerProvider(server_address=llm_settings["url"])
         elif provider_type == "llama_cpp_python":
             LlamaCppPythonProvider = importlib.import_module("llama_cpp_agent.providers").LlamaCppPythonProvider
+            from llama_cpp import Llama
             llama_model = Llama(
                 model_path=f"models/{llm_settings['filename']}",
                 flash_attn=True,
