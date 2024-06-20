@@ -23,10 +23,23 @@ llms:
     server: 'Erebus'
     max_tokens: 8192
   groq:
-    agent_provider: groq
-    url: "https://api.groq.com/openai/v1"
-    model: "mixtral-8x7b-32768"
+    name: 'Groq Mixtral Instruct'
+    type: Mistral
+    filename: "mixtral-8x7b-32768"
     huggingface: "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    url: "https://api.groq.com/openai/v1"
+    agent_provider: 'groq'
+    server: 'Groq'
+    max_tokens: 25000
+  openai:
+    name: "OpenAI GPT-3.5-turbo Instruct"
+    type: OpenAI
+    filename: "gpt-3.5-turbo-instruct"
+    huggingface: "openai/gpt-3.5-turbo-instruct"
+    url: "https://api.openai.com/v1/"
+    agent_provider: 'openai'
+    server: 'OpenAI'
+    max_tokens: 25000
 personas:
   Default:
     name: "Default"
