@@ -7,6 +7,7 @@ from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
 from app.modules.product_comparison_module import ProductComparisonModule
 from app.modules.agentic_reflection_module import AgenticReflectionModule
+from app.modules.translation_module import TranslationModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 import uvicorn
@@ -67,12 +68,22 @@ except ImportError as e:
     agentic_reflection_module = None
     logger.info(f"Agentic Reflection module could not be initialized: {e}. Reflection functionality is disabled.")
 
+try:
+    translation_module = TranslationModule(config, logger)
+except ImportError as e:
+    translation_module = None
+    logger.info(f"Translation module could not be initialized: {e}. Translation functionality is disabled.")
 
 class ChatRequest(BaseModel):
     message: str
 
 class ChatResponse(BaseModel):
     response: str
+
+class TranslationRequest(BaseModel):
+    text: str
+    source_language: str
+    target_language: str
 
 @app.get("/", summary="Health Check", tags=["Health"])
 def health_check():
@@ -172,6 +183,16 @@ def reflective_response(input_message: str):
         logger.error(f"Error processing reflective response for message: {input_message}, error: {e}")
         raise HTTPException(status_code=500, detail="Error processing reflective response")
 
+@app.post("/translate", response_model=ChatResponse, summary="Translate text", tags=["Translation Module"])
+async def translate(request: TranslationRequest):
+    if not translation_module:
+        raise HTTPException(status_code=501, detail="Translation functionality is disabled.")
+    try:
+        translated_text = translation_module.translate(request.text, request.source_language, request.target_language)
+        return {"response": translated_text}
+    except Exception as e:
+        logger.error(f"Error translating text: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 if __name__ == "__main__":
     uvicorn.run("app.api_service:app", host=server_name, port=server_port, reload=False, app_dir="app/")

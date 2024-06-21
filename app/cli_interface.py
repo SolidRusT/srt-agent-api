@@ -5,6 +5,7 @@ from app.modules.wiki_summary_module import WikiSummaryModule
 from app.modules.wikipedia_query_module import WikipediaQueryModule
 from app.modules.product_comparison_module import ProductComparisonModule
 from app.modules.agentic_reflection_module import AgenticReflectionModule
+from app.modules.translation_module import TranslationModule
 from srt_core.config import Config
 from srt_core.utils.logger import Logger
 
@@ -56,6 +57,13 @@ def main():
     except ImportError as e:
         agentic_reflection_module = None
         logger.info(f"Agentic Reflection module could not be initialized: {e}. Reflection functionality is disabled.")
+
+    # Initialize TranslationModule with error handling
+    try:
+        translation_module = TranslationModule(config, logger)
+    except ImportError as e:
+        translation_module = None
+        logger.info(f"Translation module could not be initialized: {e}. Translation functionality is disabled.")
 
     while True:
         user_input = input("> ")
@@ -141,6 +149,15 @@ def main():
                     print(f"Error processing reflective response: {e}")
             else:
                 print("Reflection functionality is disabled due to missing dependencies.")
+
+        elif user_input.startswith("translate:"):
+            if translation_module:
+                _, text, source_language, target_language = user_input.split(",")
+                translated_text = translation_module.translate(text.strip(), source_language.strip(),
+                                                               target_language.strip())
+                print(f"Translated Text: {translated_text}")
+            else:
+                print("Translation functionality is disabled due to import issues.")
         else:
             # Universal chat handling with function calling
             try:
